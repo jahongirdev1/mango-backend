@@ -1,0 +1,301 @@
+{% extends 'admin/base.html' %}
+{% block container %}
+
+<div class="components-preview">
+    <div class="nk-block-head nk-block-head-sm">
+        <div class="nk-block-between">
+            <div class="nk-block-head-content">
+                <h3 class="nk-block-title page-title"></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="nk-block">
+        <div class="card card-stretch">
+            <div class="card-inner">
+                <div class="card-title-group">
+                    <div class="card-title">
+                        <h5 class="title">
+                            Компании
+                        </h5>
+                    </div>
+                    <div class="nk-block-head-content">
+                        <div class="toggle-wrap nk-block-tools-toggle">
+                            <a href="#"
+                               class="btn btn-icon btn-trigger toggle-expand me-n1"
+                               data-target="pageMenu">
+                                <em class="icon ni ni-more-v"></em>
+                            </a>
+                            <div class="toggle-expand-content" data-content="pageMenu">
+                                <ul class="nk-block-tools g-3">
+                                    <li>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-right"><em
+                                                    class="icon ni ni-search"></em></div>
+                                            <input type="text" class="form-control" id="filter-query"
+                                                   value="{{request.args.get('query', '')}}"
+                                                   placeholder="Поиск"></div>
+                                    </li>
+                                    <li class="nk-block-tools-opt">
+                                        <a href="#" data-target="addProduct"
+                                           class="toggle btn btn-icon btn-primary d-md-none">
+                                            <em class="icon ni ni-plus"></em>
+                                        </a>
+                                        <a href="#"
+                                           data-target="addProduct"
+                                           class="toggle btn btn-primary d-none d-md-inline-flex">
+                                            <em class="icon ni ni-plus"></em>
+                                            <span>Добавить</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="nk-block">
+                <div class="card">
+                    <div class="nk-tb-list nk-tb-ulist is-compact">
+                        <div class="nk-tb-item nk-tb-head">
+                            <div class="nk-tb-col col-3"><span>Название</span></div>
+                            <div class="nk-tb-col col-1"><span>Телефон номер</span></div>
+                            <div class="nk-tb-col col-1"><span>Адрес</span></div>
+                            <div class="nk-tb-col col-2"><span>Руководитель</span></div>
+                            <div class="nk-tb-col"><span>Под-уборка</span></div>
+                            <div class="nk-tb-col"><span>Отстой ваг-в</span></div>
+                            <div class="nk-tb-col"><span>Взвешивание</span></div>
+                            <div class="nk-tb-col"><span>Аренда пом-е</span></div>
+                            <div class="nk-tb-col"><span>Аренда весов</span></div>
+                            <div class="nk-tb-col nk-tb-col-tools text-end"></div>
+                        </div>
+                        {% for item in companies %}
+                        <div class="nk-tb-item js-cont" data-id="{{ item._id }}">
+                            <div class="nk-tb-col col-3">
+                                <input class="form-control" name="title" type="text" value="{{item.title}}">
+                            </div>
+                            <div class="nk-tb-col col-1">
+                                <input class="form-control" name="phone" type="text" value="{{item.phone or ''}}">
+                            </div>
+                            <div class="nk-tb-col col-1">
+                                <input class="form-control" name="address" type="text" value="{{item.address or ''}}">
+                            </div>
+                            <div class="nk-tb-col col-2">
+                                <input class="form-control" name="manager" type="text" value="{{item.manager or ''}}">
+                            </div>
+                            <div class="nk-tb-col">
+                                <input class="form-control" name="sum_cleaning" type="text"
+                                       value="{{item.sum_cleaning or ''}}">
+                            </div>
+                            <div class="nk-tb-col">
+                                <input class="form-control" name="sum_stay" type="text" value="{{item.sum_stay or ''}}">
+                            </div>
+                            <div class="nk-tb-col">
+                                <input class="form-control" name="sum_weighing" type="text"
+                                       value="{{item.sum_weighing or ''}}">
+                            </div>
+                            <div class="nk-tb-col">
+                                <input class="form-control" name="sum_rent_m" type="text"
+                                       value="{{item.sum_rent_m or ''}}">
+                            </div>
+                            <div class="nk-tb-col">
+                                <input class="form-control" name="sum_rent_scale" type="text"
+                                       value="{{item.sum_rent_scale or ''}}">
+                            </div>
+                            <div class="nk-tb-col nk-tb-col-tools">
+                                <ul data-id="{{ item._id }}" class="nk-tb-actions gx-1">
+                                    <li class="nk-tb-action">
+                                        <a class="js-remove">
+                                                <span class="tb-status text-danger">
+                                                    <em class="icon ni ni-trash"></em>
+                                                </span>
+                                        </a>
+                                    </li>
+                                    <li class="nk-tb-action">
+                                        <a class="js-update">
+                                                <span class="tb-status text-success">
+                                                <em class="icon ni ni-check"></em>
+                                                </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="nk-add-product toggle-slide toggle-slide-right" data-content="addProduct"
+         data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar id="new-data-item">
+        <div class="nk-block">
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-title">Название
+                        </label>
+                        <input class="form-control" type="text" name="title" id="cf-title">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-phone">Телефон номер
+                        </label>
+                        <input class="form-control" type="text" name="phone" id="cf-phone"
+                               placeholder="7 XXX XXX XX XX">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-address">Адрес
+                        </label>
+                        <input class="form-control" type="text" name="address" id="cf-address">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-manager">Руководитель
+                        </label>
+                        <input class="form-control" type="text" name="manager" id="cf-manager">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-cleaning">Под-уборка
+                        </label>
+                        <input class="form-control" type="number" name="sum_cleaning" min="0" id="cf-cleaning">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-stay">Отстой ваг-в
+                        </label>
+                        <input class="form-control" type="number" name="sum_stay" min="0" id="cf-stay">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-weighing">Взвешивание
+                        </label>
+                        <input class="form-control" type="number" name="sum_weighing" min="0" id="cf-weighing">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-rent-m">Аренда пом-е
+                        </label>
+                        <input class="form-control" type="number" name="sum_rent_m" min="0" id="cf-rent-m">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-rent-scale">Аренда весов
+                        </label>
+                        <input class="form-control" type="number" name="sum_rent_scale" min="0" id="cf-rent-scale">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <button id="createButton" onclick="createItem()" class="btn btn-primary"><em
+                            class="icon ni ni-plus"></em><span>Добавить</span></button>
+                </div>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+    $('li[data-li="companies"]').addClass('active')
+    $('li[data-li="companies-list"]').addClass('active')
+
+    async function createItem() {
+        $('#createButton').prop('disabled', true)
+        try {
+            let response = await fetch('/api/companies/', {
+                method: 'POST',
+                body: JSON.stringify(getValues('#new-data-item'))
+            });
+
+            response = await response.json();
+            if (response._success === true) {
+                window.location.reload();
+            } else {
+                $('#createButton').prop('disabled', false)
+                alert(response.message);
+            }
+
+        } catch (error) {
+            $('#createButton').prop('disabled', false)
+            alertShow('waring', `${error.message}`);
+        }
+    }
+
+    $('.js-update').click(async function () {
+        var itemId = $(this).parents('ul').data('id');
+        try {
+            let data = getValues('.js-cont[data-id="' + itemId + '"]')
+            let response = await fetch(`/api/companies/${itemId}`, {
+                method: 'PUT',
+                body: JSON.stringify(data)
+            });
+
+            response = await response.json();
+            if (response._success === true) {
+                alertShow('success', 'Обнавлено')
+                // window.location.reload();
+            } else {
+                alert(response.message);
+            }
+
+        } catch (error) {
+            alertShow('waring', `${error.message}`);
+        }
+    })
+
+    let urlParams = new URLSearchParams(window.location.search);
+
+    $('#filter-query').change(function () {
+        if (urlParams.has('query')) {
+            urlParams.delete('query')
+        }
+
+        urlParams.append('query', $(this).val())
+        window.location.href = window.location.protocol + '//' + window.location.host + window.location.pathname + '?' + urlParams.toString()
+    })
+
+    $('.js-remove').click(async function () {
+        if (confirm('Действительно хотите удалить')) {
+            var itemId = $(this).parents('ul').data('id');
+            try {
+                let response = await fetch('/api/companies/' + itemId, {
+                    method: 'DELETE'
+                });
+                response = await response.json();
+                if (response._success === true) {
+                    window.location.reload();
+                } else {
+                    alert(response.message);
+                }
+            } catch (error) {
+                alertShow('waring', `${error.message}`);
+            }
+        }
+    })
+
+</script>
+{% endblock %}

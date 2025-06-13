@@ -1,0 +1,104 @@
+{% extends 'admin/base.html' %}
+{% block container %}
+<div class="nk-content-body">
+    <div class="components-preview wide-md mx-auto">
+        <div class="nk-block nk-block-lg">
+            <div class="row g-gs">
+                <div class="col-lg-12">
+                    <div class="card card-bordered h-100">
+                        <div class="card-inner" id="data-item">
+                            <div class="card-head"><h5 class="card-title"></h5></div>
+                            <div>
+                                <div class="form-group">
+                                    <label class="form-label"
+                                           for="cf-last-name">Фимилия
+                                    </label>
+                                    <input type="text" class="form-control"
+                                           name="last_name"
+                                           value="{{employee.last_name}}"
+                                           id="cf-last-name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"
+                                           for="cf-first-name">Имя
+                                    </label>
+                                    <input type="text" class="form-control"
+                                           name="first_name"
+                                           value="{{employee.first_name}}"
+                                           id="cf-first-name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"
+                                           for="cf-middle-name">Отчества
+                                    </label>
+                                    <input type="text" class="form-control"
+                                           value="{{employee.middle_name}}"
+                                           name="middle_name"
+                                           id="cf-middle-name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"
+                                           for="cf-password-new">Пароль
+                                    </label>
+                                    <input type="password" class="form-control"
+                                           name="password"
+                                           id="cf-password-new">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label"
+                                           for="cf-username">Username
+                                    </label>
+                                    <input type="text" class="form-control"
+                                           value="{{employee.username}}"
+                                           name="username"
+                                           id="cf-username">
+                                </div>
+
+                                <div class="form-group">
+                                    <button onclick="saveItem()" type="submit" class="btn btn-lg btn-primary">
+                                        Сохранить
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    $('li[data-li="users"]').addClass('active')
+    $('li[data-li="users-list"]').addClass('active')
+
+    async function saveItem() {
+        try {
+            let data = getValues('#data-item')
+            data.action = 'main'
+
+            let response = await fetch('/api/users/' + '{{employee.id}}', {
+                method: 'PUT',
+                body: JSON.stringify(data)
+            });
+
+            response = await response.json();
+            if (response._success === true) {
+                alertShow('success')
+                window.location.href = '/api/users/'
+            } else {
+                alert(response.message);
+            }
+
+        } catch (error) {
+            alertShow('waring', `${error.message}`);
+        }
+
+    }
+
+</script>
+
+{% endblock %}

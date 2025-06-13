@@ -1,0 +1,370 @@
+{% extends 'admin/base.html' %}
+{% block container %}
+<div class="nk-content-body">
+    <div class="nk-block nk-block-lg">
+        <div class="card">
+            <div class="card-aside-wrap">
+                <div class="card-content">
+                    <ul class="nav nav-tabs nav-tabs-mb-icon nav-tabs-card" role="tablist">
+                        <li class="nav-item" role="presentation"><a class="nav-link" data-bs-toggle="tab"
+                                                                    href="#tabInfo" aria-selected="true" role="tab"><em
+                                class="icon ni ni-user-circle-fill"></em><span>Карточка клиента</span></a></li>
+
+                    </ul>
+                    <div class="card-inner">
+                        <div class="tab-content">
+                            <div class="tab-pane" id="tabInfo" role="tabpanel">
+                                <div class="row g-gs">
+                                    <div class="col-lg-12">
+                                        <div class="card card-bordered h-100">
+                                            <div class="card-inner" id="data-item">
+                                                <div class="card-head"><h5 class="card-title"></h5></div>
+                                                <div>
+                                                    <div class="form-group">
+                                                        <label class="form-label"
+                                                               for="cf-last-name">Фимилия
+                                                        </label>
+                                                        <input type="text" class="form-control"
+                                                               name="last_name"
+                                                               value="{{client.last_name or ''}}"
+                                                               id="cf-last-name">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="form-label"
+                                                               for="cf-first-name">Имя
+                                                        </label>
+                                                        <input type="text" class="form-control"
+                                                               name="first_name"
+                                                               value="{{client.first_name or ''}}"
+                                                               id="cf-first-name">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="form-label"
+                                                               for="cf-middle-name">Отчества
+                                                        </label>
+                                                        <input type="text" class="form-control"
+                                                               value="{{client.middle_name or ''}}"
+                                                               name="middle_name"
+                                                               id="cf-middle-name">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="form-label"
+                                                               for="cf-phone-new">Телефон номер
+                                                        </label>
+                                                        <input type="text" class="form-control"
+                                                               name="phone"
+                                                               value="{{client.phone or ''}}"
+                                                               id="cf-phone-new">
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label class="form-label"
+                                                               for="cf-address-new">Адрес
+                                                        </label>
+                                                        <input type="text" class="form-control"
+                                                               name="address"
+                                                               value="{{client.address or ''}}"
+                                                               id="cf-address-new">
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <a onclick="editItem({{client.id}})"
+                                                           class="btn btn-lg btn-success">
+                                                            Изменить
+                                                        </a>
+                                                        <a onclick="removeItem({{client.id}})"
+                                                           class="btn btn-lg btn-danger">
+                                                            Удалить
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" id="addDiagnosis">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content"><a href="#" class="close" data-bs-dismiss="modal"><em
+                class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-md" id="new-data-item">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="nk-add-product toggle-slide toggle-slide-right" data-content="updateVisitProduct"
+     data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar
+     id="update-data-item">
+    <div class="nk-block">
+        <div class="row g-3">
+            <input type="hidden" id="up-id" name="id">
+            <div class="col-12">
+                <div class="form-group">
+                    <label class="form-label"
+                           for="up-client">Клиент
+                    </label>
+                    <input type="text" id="up-client" disabled class="form-control">
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="form-group">
+                    <label class="form-label"
+                           for="up-good">Товар
+                    </label>
+                    <input type="text" id="up-good" disabled class="form-control">
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="up-is-our" disabled>
+                    <label class="custom-control-label" for="up-is-our">С собой</label>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="form-group">
+                    <label class="form-label"
+                           for="up-reasons">Услуги
+                    </label>
+                    <input type="text" id="up-reasons" disabled class="form-control">
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="form-group">
+                    <label class="form-label"
+                           for="up-count">Объем (Количество)
+                    </label>
+                    <input disabled type="number" class="form-control" name="count" id="up-count">
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-group">
+                    <label class="form-label"
+                           for="up-sum">Сумма
+                    </label>
+                    <input type="number" min="0.0" class="form-control"
+                           name="sum"
+                           id="up-sum">
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="form-group">
+                    <label class="form-label"
+                           for="up-description">Описание
+                    </label>
+                    <textarea class="form-control" name="description" id="up-description"></textarea>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="form-group">
+                    <label class="form-label"
+                           for="up-pledged-sum">Заклад
+                    </label>
+                    <input type="number" min="0.0" class="form-control"
+                           id="up-pledged-sum" disabled>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="up-is-paid">
+                    <label class="custom-control-label" for="up-is-paid">Оплатил</label>
+                </div>
+            </div>
+            <div class="col-12">
+                <a onclick="updateVisit()" class="btn btn-primary"><em
+                        class="icon ni ni-plus"></em><span>Изменить</span></a>
+            </div>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    $('li[data-li="clients"]').addClass('active')
+    $('li[data-li="clients-list"]').addClass('active')
+
+    async function editItem(clientId) {
+        try {
+            let data = getValues('#data-item')
+            data.action = 'main'
+            data.client_id = clientId
+
+            let response = await fetch('/api/clients/' + clientId, {
+                method: 'PUT',
+                body: JSON.stringify(data)
+            });
+
+            response = await response.json();
+            if (response._success === true) {
+                alertShow('success')
+            } else {
+                alert(response.message);
+            }
+
+        } catch (error) {
+            alertShow('waring', `${error.message}`);
+        }
+    }
+
+    async function removeItem(itemId) {
+        try {
+            let response = await fetch('/api/clients/' + itemId, {
+                method: 'DELETE'
+            });
+
+            response = await response.json();
+            if (response._success === true) {
+                alertShow('success')
+                window.location.href = `/api/clients/`;
+            } else {
+                alertShow('error', response.message);
+            }
+
+        } catch (error) {
+            alertShow('waring', `${error.message}`);
+        }
+    }
+
+    async function removeVisit(itemId) {
+        try {
+            let response = await fetch('/api/store/visits/' + itemId, {
+                method: 'DELETE'
+            });
+
+            response = await response.json();
+            if (response._success === true) {
+                window.location.href = '/api/store/visits/';
+            } else {
+                alert(response.message);
+            }
+
+        } catch (error) {
+            alertShow('waring', `${error.message}`);
+        }
+    }
+
+    async function openVisit(itemId) {
+        try {
+            let response = await fetch(`/api/store/visits/${itemId}?response_type=json`, {
+                method: 'GET'
+            });
+
+            response = await response.json();
+            console.log(response)
+            if (response._success === true) {
+                $('#up-client').val(response.visit.client && `${response.visit.client.first_name} ${response.visit.client.last_name}`)
+                $('#up-good').val(response.visit.good && response.visit.good.title || response.visit.title)
+                if (response.visit.is_our) {
+                    $('#up-is-our').prop('checked', true)
+                }
+                $('#up-reasons').val(response.visit.reason && response.visit.reason.title)
+                $('#up-count').val(response.visit.count)
+                $('#up-sum').val(response.visit.sum)
+                $('#up-pledged-sum').val(response.visit.pledged_sum)
+                $('#up-description').text(response.visit.description)
+                if (response.visit.is_paid) {
+                    $('#up-is-paid').prop('checked', true)
+                }
+                $('#up-id').val(itemId)
+                up_is_paid = response.visit.is_paid;
+
+            } else {
+                alert(response.message);
+            }
+
+        } catch (error) {
+            alertShow('waring', `${error.message}`);
+        }
+    }
+
+    let up_is_paid = false;
+    $('#up-is-paid').on('change', function () {
+        if ($(this).is(':checked')) {
+            up_is_paid = true;
+        } else {
+            up_is_paid = false;
+        }
+    });
+
+    async function updateVisit() {
+        try {
+            let data = getValues('#update-data-item')
+            let response = await fetch(`/api/store/visits/${data.id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    ...data,
+                    is_paid: up_is_paid
+                })
+            });
+
+            response = await response.json();
+            if (response._success === true) {
+                window.location.reload();
+            } else {
+                alert(response.message);
+            }
+
+        } catch (error) {
+            alertShow('waring', `${error.message}`);
+        }
+    }
+
+    function getUrlParams() {
+        let params = {};
+        let queryString = window.location.search.substring(1);
+        let queryArray = queryString.split("&");
+
+        queryArray.forEach(function (param) {
+            let [key, value] = param.split("=");
+            if (key) params[key] = decodeURIComponent(value || "");
+        });
+
+        return params;
+    }
+
+    function paramsToQueryString(params) {
+        return Object.keys(params)
+            .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+            .join("&");
+    }
+
+    const itemId = '{{client.id}}'
+
+    function filterChange() {
+        let params = getUrlParams();
+        params['is_paid'] = $('#f-status-paid').val();
+        let updatedQueryString = paramsToQueryString(params);
+        window.location.href = `/api/clients/${itemId}?${updatedQueryString}#tabVisits`
+    }
+
+    let tabInfo = ['tabInfo', 'tabVisits'];
+    let hash = window.location.hash.substring(1);
+    if (tabInfo.includes(hash)) {
+        $('a[href="#' + hash + '"]').addClass('active')
+        $('div[id="' + hash + '"]').addClass('active').addClass('show')
+    } else {
+        $('a[href="#tabInfo"]').addClass('active')
+        $('div[id="tabInfo"]').addClass('active').addClass('show')
+    }
+
+</script>
+
+{% endblock %}

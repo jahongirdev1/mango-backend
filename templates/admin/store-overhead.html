@@ -1,0 +1,555 @@
+{% extends 'admin/base.html' %}
+{% block container %}
+<div class="nk-content-body">
+    <div class="nk-block-head nk-block-head-sm">
+        <div class="nk-block-between g-3">
+            <div class="nk-block-head-content">
+                <a href="/api/store/overheads/" class="btn btn-outline-light bg-white d-none d-sm-inline-flex">
+                    <em class="icon ni ni-arrow-left"></em>
+                    <span>Назад</span>
+                </a>
+                <a href="/api/store/overheads/"
+                   class="btn btn-icon btn-outline-light bg-white d-inline-flex d-sm-none">
+                    <em class="icon ni ni-arrow-left"></em>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="nk-block nk-block-lg">
+        <div class="card">
+            <div class="card-aside-wrap">
+                <div class="card-content">
+                    <ul class="nav nav-tabs nav-tabs-mb-icon nav-tabs-card">
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab"
+                                                href="#tabItem1"><em
+                                class="icon ni ni-user-circle-fill"></em><span>Инфо</span></a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab"
+                                                href="#tabItem2"><em
+                                class="icon ni ni-property"></em><span>Товары</span></a></li>
+                    </ul>
+                    <div class="card-inner">
+                        <div class="tab-content">
+                            <div class="tab-pane" id="tabItem1">
+                                <div class="nk-block nk-block-lg">
+                                    <div class="row g-gs">
+                                        <div class="col-lg-12">
+                                            <div class="card card-bordered h-100">
+                                                <div class="card-inner" id="data-item">
+                                                    <div>
+                                                        <div class="form-group">
+                                                            <div class="form-group">
+                                                                <label class="form-label"
+                                                                       for="cf-title">Название
+                                                                </label>
+                                                                <input type="text" class="form-control"
+                                                                       name="title"
+                                                                       value="{{overhead.title}}"
+                                                                       id="cf-title">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="form-group">
+                                                                <label class="form-label"
+                                                                       for="cf-description">Описание
+                                                                </label>
+                                                                <input type="text" class="form-control"
+                                                                       name="description"
+                                                                       value="{{overhead.description}}"
+                                                                       id="cf-description">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="form-group">
+                                                                <label class="form-label"
+                                                                       for="cf-uid">Номер документа
+                                                                </label>
+                                                                <input type="text" class="form-control"
+                                                                       name="uid"
+                                                                       value="{{overhead.uid}}"
+                                                                       id="cf-uid">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="form-label"
+                                                                   for="cf-date">Время составления
+                                                            </label>
+                                                            <input type="text" class="form-control date-picker-alt"
+                                                                   data-date-format="yyyy-mm-dd"
+                                                                   name="date"
+                                                                   value="{{overhead.date}}"
+                                                                   id="cf-date">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="form-label"
+                                                                   for="cf-paid_summ">Сумма к оплате
+                                                            </label>
+                                                            <input class="form-control"
+                                                                   disabled="disabled"
+                                                                   value="{{overhead.sum or ''}}"
+                                                                   id="cf-paid_summ">
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <button onclick="saveItem()" type="submit"
+                                                                    class="btn btn-lg btn-primary">
+                                                                Изменить
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane active" id="tabItem2">
+                                <div class="nk-block nk-block-between">
+                                    <div class="nk-block-head"></div>
+
+                                    <div class="nk-block">
+                                        {% if overhead.is_close %}
+                                        <a class="btn btn-success">
+                                            <em class="icon ni ni-check"></em>
+                                            <span>Завершен</span>
+                                        </a>
+                                        {% else %}
+                                        <a onclick="closeOverhead()"
+                                           class="toggle btn btn-danger">
+                                            <em class="icon ni ni-check"></em>
+                                            <span>Завершить</span>
+                                        </a>
+                                        <a href="#"
+                                           data-target="addProduct"
+                                           class="toggle btn btn-primary">
+                                            <em class="icon ni ni-plus"></em>
+                                            <span>Добавить</span>
+                                        </a>
+
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% if overhead_items %}
+                                <div class="nk-block">
+                                    <div class="card">
+                                        <div class="nk-tb-list nk-tb-ulist is-compact">
+                                            <div class="nk-tb-item nk-tb-head">
+                                                <div class="nk-tb-col"><span>Название</span></div>
+                                                <div class="nk-tb-col"><span>Цена прихода</span></div>
+                                                <div class="nk-tb-col"><span>Цена продаж</span></div>
+                                                <div class="nk-tb-col"><span>Количество</span></div>
+                                                <div class="nk-tb-col nk-tb-col-tools text-end"></div>
+                                            </div>
+                                            {% for item in overhead_items %}
+                                            <div class="nk-tb-item">
+                                                <div class="nk-tb-col">
+                                                    <div class="user-card">
+                                                        <div class="user-info">
+                                                            <span class="tb-lead">
+                                                                {{item.title or ''}}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="nk-tb-col">
+                                                    <span>{{item.arrival_price or ''}}</span>
+                                                </div>
+
+                                                <div class="nk-tb-col">
+                                                    <span>{{item.sale_price or ''}}</span>
+                                                </div>
+
+                                                <div class="nk-tb-col">
+                                                    <span>{{item.count or ''}}</span>
+                                                </div>
+
+                                                <div class="nk-tb-col nk-tb-col-tools">
+                                                    {% if not overhead.is_close %}
+                                                    <ul class="nk-tb-actions gx-1 my-n1">
+                                                        <li class="me-n1">
+                                                            <div class="dropdown"><a href="#"
+                                                                                     class="dropdown-toggle btn btn-icon btn-trigger"
+                                                                                     data-bs-toggle="dropdown"><em
+                                                                    class="icon ni ni-more-h"></em></a>
+                                                                <div class="dropdown-menu dropdown-menu-end">
+                                                                    <ul class="link-list-opt no-bdr">
+                                                                        <li>
+                                                                            <a onclick="removeOverheadItem({{item.id}})">
+                                                                                <em class="icon ni ni-trash text-danger"></em>
+                                                                                <span class="tb-status text-danger">Удалить</span>
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="card-inner">
+                                    <figure class="text-center">
+                                        <blockquote class="blockquote"><h3>
+                                            Cписок товаров
+                                        </h3></blockquote>
+                                    </figure>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="nk-add-product toggle-slide toggle-slide-right" data-content="addProduct"
+     data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar id="new-data-item">
+    <div class="nk-block">
+        <div class="row g-3">
+            <div class="col-12">
+                <div class="form-group">
+                    <label class="form-label"
+                           for="cf-goods">Выберите товары или ниже укажите наименования
+                    </label>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-group">
+                    <select id="cf-goods" name="good_id"></select>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="good_title" id="cf-good-title">
+                </div>
+            </div>
+
+            <div class="col-12" id="div-category-goods" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label"
+                           for="cf-category">Выберите категории товара
+                    </label>
+                    <select id="cf-category"></select>
+                </div>
+            </div>
+
+            <div class="col-12" id="div-category-children" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label"
+                           for="cf-category-children">Выберите под категории товара
+                    </label>
+                    <select id="cf-category-children"></select>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="form-group">
+                    <label class="form-label"
+                           for="cf-arrival-price">Цена прихода
+                    </label>
+                    <input type="number" min="0.0" class="form-control"
+                           name="arrival_price"
+                           id="cf-arrival-price">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="percentFlag">
+                    <label class="custom-control-label" for="percentFlag">Использовать процент</label>
+                </div>
+            </div>
+            <div class="col-6" style="display: none;" id="div-price-percent">
+                <div class="form-group">
+                    <input type="number" min="0" class="form-control" id="cf-price-percent">
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="form-group">
+                    <label class="form-label"
+                           for="cf-sale-price">Цена продажа
+                    </label>
+                    <input type="number" min="0.0" class="form-control"
+                           name="sale_price"
+                           id="cf-sale-price">
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="form-group">
+                    <label class="form-label"
+                           for="cf-count">Количество
+                    </label>
+                    <input type="number" min="0.0" class="form-control"
+                           name="count"
+                           id="cf-count">
+                </div>
+            </div>
+
+            <div class="col-12">
+                <button id="createOverheadButton" onclick="createOverheadItem()" class="btn btn-primary"><em
+                        class="icon ni ni-plus"></em><span>Добавить</span></button>
+            </div>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
+<script>
+    $('li[data-li="store"]').addClass('active')
+    $('li[data-li="store-overheads"]').addClass('active')
+
+    const itemId = '{{overhead.id}}'
+
+    async function saveItem() {
+        try {
+            let response = await fetch('/api/store/overheads/' + itemId, {
+                method: 'PUT',
+                body: JSON.stringify(getValues('#data-item'))
+            });
+
+            response = await response.json();
+            if (response._success === true) {
+                window.location.reload()
+            } else {
+                alert(response.message);
+            }
+
+        } catch (error) {
+            alertShow('waring', `${error.message}`);
+        }
+    }
+
+    async function closeOverhead() {
+        try {
+            let response = await fetch('/api/store/overheads/' + itemId, {
+                method: 'POST',
+                body: JSON.stringify({
+                    'action': 'close'
+                })
+            });
+            response = await response.json();
+            if (response._success === true) {
+                window.location.reload();
+            } else {
+                alert(response.message);
+            }
+
+        } catch (error) {
+            alertShow('waring', `${error.message}`);
+        }
+    }
+
+    $('#cf-good-title').on('change', function () {
+        if ($(this).val()) {
+            $('#div-category-goods').show()
+        } else {
+            $('#div-category-goods').hide()
+        }
+    })
+
+    $('#percentFlag').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('#div-price-percent').show();
+            $('#cf-price-percent').val(0);
+        } else {
+            $('#div-price-percent').hide();
+        }
+    });
+
+    $('#cf-goods').select2({
+        placeholder: 'Выберите товар',
+        minimumInputLength: 1,
+        language: {
+            inputTooShort: function (args) {
+                let remainingChars = args.minimum - args.input.length;
+                return `Пожалуйста введите больше ${remainingChars} букв`;
+            },
+            noResults: function () {
+                return "Товар не найден";
+            }
+        },
+        ajax: {
+            transport: async function (params, success, failure) {
+                try {
+                    const query = params.data.q || '';
+                    const response = await fetch(`/api/store/goods?response_type=json&query=${encodeURIComponent(query)}`);
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const data = await response.json();
+                    const results = data.goods.map(good => ({
+                        id: good.id,
+                        text: `${good.title} (${good.category.unit === 'pieces' && 'шт.' || good.category.unit === 'metric' && 'м.' || 'кв.'})`,
+                        value: good.id
+                    }));
+
+                    success({results});
+                } catch (error) {
+                    failure(error);
+                }
+            },
+            processResults: function (data) {
+                return data;
+            }
+        }
+    });
+
+    $('#cf-category').select2({
+        placeholder: 'Выберите категории',
+        language: {
+            noResults: function () {
+                return "Категории не найден";
+            }
+        },
+        ajax: {
+            transport: async function (params, success, failure) {
+                try {
+                    const query = params.data.q || '';
+                    const response = await fetch(`/api/store/categories?response_type=json&query=${encodeURIComponent(query)}`);
+
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const data = await response.json();
+                    console.log(data)
+                    const results = data.categories.map(category => ({
+                        id: category.id,
+                        text: `${category.title}`,
+                        value: category.id
+                    }));
+
+                    success({results});
+                } catch (error) {
+                    failure(error);
+                }
+            },
+            processResults: function (data) {
+                return data;
+            }
+        }
+    });
+
+    let categoryId = null
+
+    $('#cf-category').on('select2:select', function (e) {
+        const parentId = e.params.data.id;
+        categoryId = parentId
+
+        $('#div-category-children').show();
+        $('#cf-category-children').empty().trigger('change');
+        $('#cf-category-children').select2({
+            placeholder: 'Выберите под категории',
+            language: {
+                noResults: function () {
+                    return "Категории не найден";
+                }
+            },
+            ajax: {
+                transport: async function (params, success, failure) {
+                    try {
+                        const query = params.data.q || '';
+                        const response = await fetch(`/api/store/categories?response_type=json&query=${encodeURIComponent(query)}&parent_id=${parentId}`);
+
+                        const data = await response.json();
+                        console.log(data)
+                        const results = data.categories.map(category => ({
+                            id: category.id,
+                            text: `${category.title}`,
+                            value: category.id
+                        }));
+
+                        success({results});
+                    } catch (error) {
+                        failure(error);
+                    }
+                },
+                processResults: function (data) {
+                    return data;
+                }
+            }
+        });
+    });
+
+    $('#cf-category-children').on('select2:select', function (e) {
+        categoryId = e.params.data.id
+    })
+
+    $('#cf-price-percent').on('change', function () {
+        let percent = parseInt($(this).val());
+        if (percent && percent > 0) {
+            let arrivalPrice = parseInt($('#cf-arrival-price').val())
+            if (arrivalPrice) {
+                $('#cf-sale-price').val((arrivalPrice * (100 + percent)) / 100);
+            }
+        }
+    })
+
+    async function createOverheadItem() {
+        $('#createOverheadButton').prop('disabled', true)
+        try {
+            let response = await fetch('/api/store/overheads/' + itemId, {
+                method: 'POST',
+                body: JSON.stringify({
+                    'action': 'add_item',
+                    'category_id': categoryId,
+                    ...getValues('#new-data-item')
+                })
+            });
+            response = await response.json();
+            if (response._success === true) {
+                window.location.reload();
+            } else {
+                alert(response.message);
+                $('#createOverheadButton').prop('disabled', false)
+            }
+
+        } catch (error) {
+            alertShow('waring', `${error.message}`);
+            $('#createOverheadButton').prop('disabled', false)
+        }
+    }
+
+    async function removeOverheadItem(overheadItemId) {
+        try {
+            let response = await fetch('/api/store/overheads/' + itemId, {
+                method: 'POST',
+                body: JSON.stringify({
+                    'action': 'remove_item',
+                    '_id': overheadItemId
+                })
+            });
+            response = await response.json();
+            if (response._success === true) {
+                window.location.reload();
+            } else {
+                alert(response.message);
+            }
+
+        } catch (error) {
+            alertShow('waring', `${error.message}`);
+        }
+    }
+
+</script>
+
+{% endblock %}
