@@ -15,7 +15,7 @@
                 <div class="card-title-group">
                     <div class="card-title">
                         <h5 class="title">
-                            Товары
+                            Секции
                         </h5>
                     </div>
                     <div class="nk-block-head-content">
@@ -225,13 +225,16 @@
 <script>
     $('li[data-li="control"]').addClass('active')
     $('li[data-li="control-sections"]').addClass('active')
-
+    const urlParams = new URLSearchParams(window.location.search);
     async function createItem() {
         $('#createButton').prop('disabled', true)
         try {
             let response = await fetch('/api/sections/', {
                 method: 'POST',
-                body: JSON.stringify(getValues('#new-data-item'))
+                body: JSON.stringify({
+                    ...getValues('#new-data-item'),
+                    branch_id: urlParams.get('branch_id')
+                })
             });
 
             response = await response.json();
