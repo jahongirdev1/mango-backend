@@ -1,4 +1,5 @@
 import hashlib
+from datetime import timedelta
 from functools import partial, wraps
 from inspect import isawaitable
 from typing import Optional
@@ -41,8 +42,11 @@ class Auth:
         return await cache.set(f'session:user_id:{token}', user['id'])
 
     @classmethod
-    async def logout(cls, request):
+    async def logout(cls, request, user_id: int = None):
+        if user_id:
+            await cache.delete(f'users:{user_id}')
         request.ctx.session['_delete'] = True
+
 
     @classmethod
     async def select_user(cls, user_id):
@@ -50,8 +54,6 @@ class Auth:
         if user:
             return ujson.loads(user)
 
-        print()
-        print('db user')
         user = await db.fetchrow(
             '''
             SELECT 
@@ -63,6 +65,7 @@ class Auth:
                 u.password,
                 u.username,
                 u.photo,
+                u.branch_id,
                 r.permissions
             FROM public.users u
             LEFT JOIN public.roles r ON u.role_id = r.id
@@ -72,7 +75,9 @@ class Auth:
         )
 
         if user:
-            await cache.set(f'users:{user_id}', ujson.dumps(dict(user)))
+            await cache.set(
+                f'users:{user_id}', ujson.dumps(dict(user)), expire=int(timedelta(minutes=60).total_seconds())
+            )
 
         return user
 

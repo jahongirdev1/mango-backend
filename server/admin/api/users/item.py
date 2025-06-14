@@ -43,53 +43,6 @@ class UsersItemView(BaseAPIView):
             'roles': roles
         })
 
-    async def post(self, request, user, user_id):
-        first_name = StrUtils.to_str(request.json.get('first_name'))
-        last_name = StrUtils.to_str(request.json.get('last_name'))
-        middle_name = StrUtils.to_str(request.json.get('middle_name'))
-        birthday = DatetimeUtils.parse(request.json.get('birthday'))
-        username = StrUtils.to_str(request.json.get('username'))
-        password = StrUtils.to_str(request.json.get('password'))
-        role_id = IntUtils.to_int(request.json.get('role_id'))
-        photo = StrUtils.to_str(request.json.get('photo'))
-
-        if not first_name:
-            return self.error(message='Отсуствует обязательный параметры "Имя"')
-
-        if not username:
-            return self.error(message='Отсуствует обязательный параметр "Логин"')
-
-        if not password:
-            return self.error(message='Отсуствует обязательный параметр "Пароль"')
-
-        try:
-            user = await db.fetchrow(
-                '''
-                INSERT INTO public.users
-                (last_name, first_name, middle_name, password, username, photo, birthday, role_id)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-                RETURNING *
-                ''',
-                last_name,
-                first_name,
-                middle_name,
-                password_to_hash(password),
-                username,
-                photo,
-                birthday,
-                role_id
-            )
-        except asyncpg.exceptions.UniqueViolationError:
-            return self.error(
-                message='Пользователь с этими значениями уже существует. Дубликат не может быть создан'
-            )
-
-
-        if not user:
-            return self.error(message='Операция не выполнена')
-
-        return self.success(data={'user': dict(user)})
-
     async def put(self, request, user, user_id):
         user_id = IntUtils.to_int(user_id)
         if not user_id:
@@ -113,7 +66,7 @@ class UsersItemView(BaseAPIView):
                 return self.error(message='Отсуствует обязательный параметр "Логин"')
 
             try:
-                user = await db.fetchrow(
+                employee = await db.fetchrow(
                     '''
                     UPDATE public.users
                     SET 
@@ -141,7 +94,7 @@ class UsersItemView(BaseAPIView):
                     message='Пользователь с этими значениями уже существует. Дубликат не может быть создан'
                 )
 
-            if not user:
+            if not employee:
                 return self.error(message='Операция не выполнена')
 
             if password:
@@ -156,16 +109,16 @@ class UsersItemView(BaseAPIView):
                     password_to_hash(password)
                 )
 
-            await cache.delete(f'users:{user["id"]}')
+            await cache.delete(f'users:{employee["id"]}')
 
-            return self.success(data={'user': dict(user)})
+            return self.success(data={'user': dict(employee)})
 
         elif action == 'reset_password':
             password = StrUtils.to_str(request.json.get('password'))
             if not password:
                 return self.error(message='Отсуствует обязательный параметр "Пароль"')
 
-            user = await db.fetchrow(
+            employee = await db.fetchrow(
                 '''
                 UPDATE public.users
                 SET password = $2
@@ -175,11 +128,11 @@ class UsersItemView(BaseAPIView):
                 user_id,
                 password_to_hash(password)
             )
-            if not user:
+            if not employee:
                 return self.error(message='Операция не выполнена')
 
             return self.success(data={
-                'user': dict(user)
+                'user': dict(employee)
             })
 
         return self.error()
@@ -189,18 +142,19 @@ class UsersItemView(BaseAPIView):
         if not user_id:
             return self.error(message='Отсуствует обязательный параметр "user_id: int"')
 
-        user = await db.fetchrow(
+        employee = await db.fetchrow(
             '''
-            DELETE FROM public.users
+            UPDATE public.users
+            SET is_active = FALSE
             WHERE id = $1
             RETURNING *
             ''',
             user_id
         )
 
-        if not user:
+        if not employee:
             return self.error(message='Операция не выполнена')
 
         return self.success(data={
-            'user': dict(user)
+            'user': dict(employee)
         })

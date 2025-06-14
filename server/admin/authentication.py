@@ -79,5 +79,5 @@ class LoginAdminView(TemplateHTTPView):
 
 class LogoutAdminView(BaseAPIView):
     async def get(self, request, user):
-        await auth.logout(request)
+        await auth.logout(request, user['id'])
         return response.redirect('/api/')

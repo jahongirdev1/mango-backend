@@ -6,7 +6,6 @@
             <div class="nk-block-head-content">
                 <h3 class="nk-block-title page-title"></h3>
             </div>
-
         </div>
     </div>
     <div class="nk-block">
@@ -78,8 +77,8 @@
                                     class="icon ni ni-more-h"></em></a>
                                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
                                     <ul class="link-list-plain">
-                                        <li><a href="/api/users/{{item.id}}/">Edit</a></li>
-                                        <li><a onclick="removeItem({{item.id}})">Remove</a></li>
+                                        <li><a href="/api/users/{{item.id}}/">Просмотр</a></li>
+                                        <li><a onclick="removeItem({{item.id}})">Удалить</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -95,7 +94,7 @@
                     <li class="page-item">
                         <a class="page-link"
                            {% if pager.prev_page %}
-                           href="/api/users/?limit={{pager.limit}}&page={{pager.prev_page}}"
+                           href="/api/users/?page={{pager.prev_page}}"
                            {% endif %}
                         >Prev</a>
                     </li>
@@ -103,7 +102,7 @@
                     <li class="page-item">
                         <a class="page-link"
                            {% if pager.next_page %}
-                           href="/api/users/?limit={{pager.limit}}&page={{pager.next_page}}"
+                           href="/api/users/?page={{pager.next_page}}"
                            {% endif %}
                         >Next</a>
                     </li>
@@ -152,6 +151,14 @@
                            name="password"
                            id="cf-password-new">
                 </div>
+                {% if _user and not _user.branch_id %}
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label" for="cf-branch">Выберите</label>
+                        <select class="form-control" id="cf-branch" name="branch_id"></select>
+                    </div>
+                </div>
+                {% endif %}
                 <div class="col-12">
                     <a onclick="createItem()" class="btn btn-primary"><em
                             class="icon ni ni-plus"></em><span>Добавить</span></a>
@@ -212,7 +219,7 @@
 
     async function createItem() {
         try {
-            let response = await fetch('/api/users/-1/', {
+            let response = await fetch('/api/users/', {
                 method: 'POST',
                 body: JSON.stringify(getValues('#new-data-item'))
             });
@@ -220,7 +227,7 @@
             response = await response.json();
             if (response._success === true) {
                 alertShow('success');
-                window.location.href = '/api/users/';
+                window.location.reload();
             } else {
                 alert(response.message);
             }
@@ -240,6 +247,37 @@
         urlParams.append('query', $(this).val())
         window.location.href = window.location.protocol + '//' + window.location.host + window.location.pathname + '?' + urlParams.toString()
     })
+
+    $('#cf-branch').select2({
+        placeholder: 'Выберите',
+        language: {
+            noResults: function () {
+                return 'Не найден';
+            }
+        },
+        ajax: {
+            transport: async function (params, success, failure) {
+                try {
+                    const query = params.data.q || '';
+                    const response = await fetch(`/api/branches?response_type=json&query=${encodeURIComponent(query)}`);
+
+                    const data = await response.json();
+                    const results = data.branches.map(i => ({
+                        id: i.id,
+                        text: `${i.title}`,
+                        value: i.id
+                    }));
+
+                    success({results});
+                } catch (error) {
+                    failure(error);
+                }
+            },
+            processResults: function (data) {
+                return data;
+            }
+        }
+    });
 
 </script>
 {% endblock %}
