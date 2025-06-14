@@ -15,6 +15,9 @@ class SectionsView(BaseAPIView):
         else:
             branch_id = IntUtils.to_int(request.args.get('branch_id'))
 
+        if not branch_id:
+            return self.error(message='Отсуствует обязательный параметры "Филиал"')
+
         cond, cond_vars = ['is_active'], []
         if branch_id:
             cond.append('branch_id = {}')
