@@ -70,12 +70,11 @@
                                                            onclick="openItem('{{item.id}}')">
                                                         <em class="icon ni ni-eye text-info"></em>
                                                         <span class="tb-status text-info">Просмотр</span>
-                                                    </a>
-                                                    </li>
+                                                    </a></li>
                                                     <li><a onclick="removeItem('{{item.id}}')"><em
                                                             class="icon ni ni-trash text-danger"></em>
-                                                        <span class="tb-status text-danger">Удалить</span></a></li>
-
+                                                        <span class="tb-status text-danger">Удалить</span>
+                                                    </a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -223,11 +222,12 @@
 {% endblock %}
 {% block js %}
 <script>
-    $('li[data-li="control"]').addClass('active')
-    $('li[data-li="control-sections"]').addClass('active')
+    $('li[data-li="control"]').addClass('active');
+    $('li[data-li="control-branches"]').addClass('active');
+
     const urlParams = new URLSearchParams(window.location.search);
     async function createItem() {
-        $('#createButton').prop('disabled', true)
+        $('#createButton').prop('disabled', true);
         try {
             let response = await fetch('/api/sections/', {
                 method: 'POST',
@@ -241,12 +241,12 @@
             if (response._success === true) {
                 window.location.reload();
             } else {
-                $('#createButton').prop('disabled', false)
+                $('#createButton').prop('disabled', false);
                 alert(response.message);
             }
 
         } catch (error) {
-            $('#createButton').prop('disabled', false)
+            $('#createButton').prop('disabled', false);
             alertShow('waring', `${error.message}`);
         }
     }
@@ -283,7 +283,7 @@
 
             response = await response.json();
             if (response._success === true) {
-                alertShow('success', 'Обновлено')
+                alertShow('success', 'Обновлено');
             } else {
                 alert(response.message);
             }
@@ -300,9 +300,7 @@
             updatedId = null;
 
             $('#updateButton').prop('disabled', true)
-            $('#up-title').val();
-            $('#up-position').val();
-            $('#photo-input-val').val();
+            $('#up-title #up-position #photo-input-val').val();
             $('#photo-img-src').prop('src', '');
 
             let response = await fetch(`/api/sections/${itemId}?response_type=json`, {
