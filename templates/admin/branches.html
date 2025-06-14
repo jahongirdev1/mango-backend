@@ -1,4 +1,7 @@
 {% extends 'admin/base.html' %}
+{% block style %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+{% endblock %}
 {% block container %}
 
 <div class="components-preview wide-md mx-auto">
@@ -120,9 +123,17 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label class="form-label"
-                               for="cf-order-time">Время обработки заказа (мин)
+                               for="cf-min-order-time">Мин время обработки заказа (мин)
                         </label>
-                        <input class="form-control" type="number" min="0" name="order_time" id="cf-order-time">
+                        <input class="form-control" type="number" min="0" name="min_order_time" id="cf-min-order-time">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-max-order-time">Макс время обработки заказа (мин)
+                        </label>
+                        <input class="form-control" type="number" min="0" name="max_order_time" id="cf-max-order-time">
                     </div>
                 </div>
                 <div class="col-12">
@@ -156,9 +167,30 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label class="form-label"
-                               for="cf-section">Выберите
+                               for="cf-min-order-time">Мин сумма заказа (₸.)
                         </label>
-                        <select class="form-select" id="cf-section" name="section_id"></select>
+                        <input class="form-control" type="number" min="0" name="min_order_sum" id="cf-min-order-sum">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-is-store">Магазин
+                        </label>
+
+                        <select class="form-control" type="text" name="is_store" id="cf-is-store">
+                            <option value="true">Да</option>
+                            <option value="false">Нет</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-category">Выберите
+                        </label>
+                        <select class="js-example-basic-multiple" multiple="multiple" id="cf-category"
+                                name="category_ids"></select>
                     </div>
                 </div>
                 <div class="col-12">
@@ -240,9 +272,25 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label class="form-label"
-                               for="up-order-time">Время обработки заказа (мин)
+                               for="up-min-order-time">Мин время обработки заказа (мин)
                         </label>
-                        <input class="form-control" type="number" min="0" name="order_time" id="up-order-time">
+                        <input class="form-control" type="number" min="0" name="min_order_time" id="up-min-order-time">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="up-max-order-time">Макс время обработки заказа (мин)
+                        </label>
+                        <input class="form-control" type="number" min="0" name="max_order_time" id="up-max-order-time">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="up-min-order-sum">Мин сумма заказа
+                        </label>
+                        <input class="form-control" type="number" min="0" name="min_order_sum" id="up-min-order-sum">
                     </div>
                 </div>
                 <div class="col-12">
@@ -271,6 +319,27 @@
                             <option value="true">Да</option>
                             <option value="false">Нет</option>
                         </select>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="up-is-store">Магазин
+                        </label>
+
+                        <select class="form-control" type="text" name="in_use" id="up-is-store">
+                            <option value="true">Да</option>
+                            <option value="false">Нет</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="up-category">Выберите
+                        </label>
+                        <select class="js-example-basic-multiple" multiple="multiple" id="up-category"
+                                name="category_ids"></select>
                     </div>
                 </div>
                 <div class="col-12">
@@ -325,6 +394,7 @@
     async function createItem() {
         $('#createButton').prop('disabled', true)
         try {
+            console.log(getValues('#new-data-item'))
             let response = await fetch('/api/branches/', {
                 method: 'POST',
                 body: JSON.stringify(getValues('#new-data-item'))
@@ -387,19 +457,14 @@
     })
 
     let updatedId = null;
+    let upCategorySelect = $('#up-category');
 
     async function openItem(itemId) {
         try {
             updatedId = null;
 
             $('#updateButton').prop('disabled', true)
-            $('#up-title').val();
-            $('#up-latitude').val();
-            $('#up-longitude').val();
-            $('#up-order-time').val();
-            $('#up-promotion-text').val();
-            $('#up-phone').val();
-            $('#photo-input-val').val();
+            $('#up-title, #up-latitude, #up-longitude, #up-min-order-time, #up-max-order-time, #up-promotion-text, #up-phone, #photo-input-val').val();
             $('#photo-img-src').prop('src', '');
 
             let response = await fetch(`/api/branches/${itemId}?response_type=json`, {
@@ -407,22 +472,62 @@
             });
 
             response = await response.json();
-            console.log(response)
             if (response._success === true) {
                 $('#updateButton').prop('disabled', false)
                 updatedId = itemId;
                 $('#up-title').val(response.branch.title);
                 $('#up-latitude').val(response.branch.latitude);
                 $('#up-longitude').val(response.branch.longitude);
-                $('#up-order-time').val(response.branch.order_time);
+                $('#up-min-order-time').val(response.branch.min_order_time);
+                $('#up-max-order-time').val(response.branch.max_order_time);
+                $('#up-min-order-sum').val(response.branch.min_order_sum);
                 $('#up-promotion-text').val(response.branch.promotion_text);
                 $('#up-phone').val(response.branch.phone);
                 if (response.branch.in_use === false) {
-                    console.log('12312')
-                    $(`#up-in-use option[value="false"]:selected`);
+                    $(`#up-in-use option[value="false"]`).prop('selected', true);
+                }
+                if (response.branch.is_store === false) {
+                    $(`#up-is-store option[value="false"]`).prop('selected', true);
                 }
                 $('#photo-input-val').val(response.branch.photo);
                 $('#photo-img-src').prop('src', `/static/uploads/${response.branch.photo}`);
+                let upCategoryIds = response.branch.category_ids
+                if (upCategoryIds) {
+                    console.log(upCategoryIds)
+                    try {
+                        let response = await fetch(`/api/categories?response_type=json&ids=${upCategoryIds.join(',')}`, {
+                            method: 'GET'
+                        });
+
+                        response = await response.json();
+                        if (response._success === true) {
+                            let responseCategories = response.categories
+
+                            if (responseCategories) {
+                                responseCategories.forEach(item => {
+                                    var option = new Option(item.title, item.id, true, true);
+                                    upCategorySelect.append(option).trigger('change');
+
+                                    upCategorySelect.trigger({
+                                        type: 'select2:select',
+                                        params: {
+                                            data: item
+                                        }
+                                    });
+                                })
+
+                            }
+
+                        } else {
+                            alert(response.message);
+                        }
+
+                    } catch (error) {
+                        console.log(error.message)
+
+                        alertShow('waring', `${error.message}`);
+                    }
+                }
 
             } else {
                 alert(response.message);
@@ -485,8 +590,8 @@
         }
     };
 
-    $('#cf-section').select2({
-        placeholder: 'Выберите',
+    $('#cf-category').select2({
+        placeholder: 'Выберите товар',
         language: {
             noResults: function () {
                 return "Не найден";
@@ -496,18 +601,14 @@
             transport: async function (params, success, failure) {
                 try {
                     const query = params.data.q || '';
-                    const response = await fetch(`/api/sections?response_type=json&query=${encodeURIComponent(query)}`);
-
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
+                    const response = await fetch(`/api/categories?response_type=json&query=${encodeURIComponent(query)}`);
 
                     const data = await response.json();
-                    const results = data.goods.map(good => ({
-                        id: good.id,
-                        text: `${good.title} (${good.category.unit === 'pieces' && 'шт.' || good.category.unit === 'metric' && 'м.' || 'кв.'})`,
-                        value: good.id,
-                        price: good.price
+                    console.log(data)
+                    const results = data.categories.map(i => ({
+                        id: i.id,
+                        text: `${i.title}`,
+                        value: i.id
                     }));
 
                     success({results});
@@ -520,6 +621,36 @@
             }
         }
     });
+    $('#up-category').select2({
+        placeholder: 'Выберите товар',
+        language: {
+            noResults: function () {
+                return "Не найден";
+            }
+        },
+        ajax: {
+            transport: async function (params, success, failure) {
+                try {
+                    const query = params.data.q || '';
+                    const response = await fetch(`/api/categories?response_type=json&query=${encodeURIComponent(query)}`);
 
+                    const data = await response.json();
+                    console.log(data)
+                    const results = data.categories.map(i => ({
+                        id: i.id,
+                        text: `${i.title}`,
+                        value: i.id
+                    }));
+
+                    success({results});
+                } catch (error) {
+                    failure(error);
+                }
+            },
+            processResults: function (data) {
+                return data;
+            }
+        }
+    });
 </script>
 {% endblock %}

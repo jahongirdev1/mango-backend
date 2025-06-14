@@ -3,6 +3,7 @@ from core.handlers import BaseAPIView
 from utils.bools import BoolUtils
 from utils.floats import FloatUtils
 from utils.ints import IntUtils
+from utils.lists import ListUtils
 from utils.strs import StrUtils
 
 
@@ -31,9 +32,12 @@ class BranchView(BaseAPIView):
         promotion_text = StrUtils.to_str(request.json.get('promotion_text'))
         latitude = FloatUtils.to_float(request.json.get('latitude'))
         longitude = FloatUtils.to_float(request.json.get('longitude'))
-        rating = FloatUtils.to_float(request.json.get('rating'))
-        order_time = IntUtils.to_int(request.json.get('order_time'))
+        min_order_time = IntUtils.to_int(request.json.get('min_order_time'))
+        max_order_time = IntUtils.to_int(request.json.get('max_order_time'))
+        min_order_sum = IntUtils.to_int(request.json.get('min_order_sum'))
         in_use = BoolUtils.to_bool(request.json.get('in_use'))
+        is_store = BoolUtils.to_bool(request.json.get('is_store'))
+        category_ids = ListUtils.to_list_of_ints(request.json.get('category_ids'))
 
         branch_id = IntUtils.to_int(branch_id)
         if not branch_id:
@@ -42,7 +46,19 @@ class BranchView(BaseAPIView):
         data = await db.fetchrow(
             '''
             UPDATE control.branches
-            SET title = $2, photo = $3, latitude = $4, longitude = $5, order_time = $6, rating = $7, promotion_text = $8, phone = $9, in_use = $10
+            SET 
+                title = $2,
+                photo = $3,
+                latitude = $4,
+                longitude = $5,
+                min_order_time = $6,
+                promotion_text = $7,
+                phone = $8,
+                in_use = $9,
+                max_order_time = $10,
+                min_order_sum = $11,
+                is_store = $12,
+                category_ids = $13
             WHERE id = $1
             RETURNING *
             ''',
@@ -51,11 +67,14 @@ class BranchView(BaseAPIView):
             photo,
             latitude,
             longitude,
-            order_time,
-            rating,
+            min_order_time,
             promotion_text,
             phone,
-            in_use
+            in_use,
+            max_order_time,
+            min_order_sum,
+            is_store,
+            category_ids
         )
 
         if not data:
