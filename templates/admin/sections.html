@@ -55,7 +55,7 @@
                         {% for item in sections %}
                         <div class="nk-tb-item js-cont" data-id="{{ item.id }}">
                             <div class="nk-tb-col">
-                                <input name="title" value="{{item.title}}" class="form-control">
+                                <span>{{item.title}}</span>
                             </div>
                             <div class="nk-tb-col nk-tb-col-tools">
                                 <ul class="nk-tb-actions gx-1 my-n1">
@@ -222,10 +222,9 @@
 {% endblock %}
 {% block js %}
 <script>
-    $('li[data-li="control"]').addClass('active');
-    $('li[data-li="control-branches"]').addClass('active');
+    $('li[data-li="panel"]').addClass('active');
+    $('li[data-li="panel-sections"]').addClass('active');
 
-    const urlParams = new URLSearchParams(window.location.search);
     async function createItem() {
         $('#createButton').prop('disabled', true);
         try {
@@ -233,7 +232,6 @@
                 method: 'POST',
                 body: JSON.stringify({
                     ...getValues('#new-data-item'),
-                    branch_id: urlParams.get('branch_id')
                 })
             });
 

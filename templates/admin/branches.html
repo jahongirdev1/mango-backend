@@ -58,7 +58,7 @@
                         {% for item in branches %}
                         <div class="nk-tb-item js-cont" data-id="{{ item.id }}">
                             <div class="nk-tb-col">
-                                <input name="title" value="{{item.title}}" class="form-control">
+                                {{item.title}}
                             </div>
                             <div class="nk-tb-col nk-tb-col-tools">
                                 <ul class="nk-tb-actions gx-1 my-n1">
@@ -69,11 +69,6 @@
                                                 class="icon ni ni-more-h"></em></a>
                                             <div class="dropdown-menu dropdown-menu-end">
                                                 <ul class="link-list-opt no-bdr">
-                                                    <li><a href="/api/sections/?branch_id={{item.id}}">
-                                                        <em class="icon ni ni-list"></em>
-                                                        <span class="tb-status">Секции</span>
-                                                    </a>
-                                                    </li>
                                                     <li><a data-target="updateProduct" class="toggle"
                                                            onclick="openItem('{{item.id}}')">
                                                         <em class="icon ni ni-eye text-info"></em>

@@ -1,4 +1,7 @@
 {% extends 'admin/base.html' %}
+{% block style %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+{% endblock %}
 {% block container %}
 
 <div class="components-preview wide-md mx-auto">
@@ -53,9 +56,9 @@
                             <div class="nk-tb-col nk-tb-col-tools text-end"></div>
                         </div>
                         {% for item in goods %}
-                        <div class="nk-tb-item js-cont" data-id="{{ item._id }}">
+                        <div class="nk-tb-item js-cont" data-id="{{ item.id }}">
                             <div class="nk-tb-col">
-                                <input name="title" value="{{item.title}}" class="form-control">
+                                {{item.title}}
                             </div>
                             <div class="nk-tb-col nk-tb-col-tools">
                                 <ul class="nk-tb-actions gx-1 my-n1">
@@ -67,12 +70,12 @@
                                             <div class="dropdown-menu dropdown-menu-end">
                                                 <ul class="link-list-opt no-bdr">
                                                     <li><a data-target="updateProduct" class="toggle"
-                                                           onclick="openItem('{{item._id}}')">
+                                                           onclick="openItem('{{item.id}}')">
                                                         <em class="icon ni ni-eye text-info"></em>
                                                         <span class="tb-status text-info">Просмотр</span>
                                                     </a>
                                                     </li>
-                                                    <li><a onclick="removeItem('{{item._id}}')"><em
+                                                    <li><a onclick="removeItem('{{item.id}}')"><em
                                                             class="icon ni ni-trash text-danger"></em>
                                                         <span class="tb-status text-danger">Удалить</span></a></li>
 
@@ -117,6 +120,55 @@
                         <textarea class="form-control" name="description" id="cf-description"></textarea>
                     </div>
                 </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-whole">Весь
+                        </label>
+                        <input class="form-control" type="number" min="0" name="whole" id="cf-whole">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-balance">Остаток
+                        </label>
+                        <input class="form-control" type="number" min="0" name="balance" id="cf-balance">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-in-use">Статус
+                        </label>
+
+                        <select class="form-control" type="text" name="in_use" id="cf-in-use">
+                            <option value="true">Да</option>
+                            <option value="false">Нет</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-section">Выберите
+                        </label>
+                        <select class="form-select" id="cf-section" name="section_id"></select>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-is-new">Новый
+                        </label>
+                        <select class="form-control" type="text" name="is_new" id="cf-is-new">
+                            <option value="true">Да</option>
+                            <option value="false">Нет</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="col-12">
                     <label class="form-label" for="customFileNew" data-name="photo">Фото</label>
                     <div class="card-preview">
@@ -163,12 +215,12 @@
             </div>
         </div>
     </div>
+
     <div class="nk-add-product toggle-slide toggle-slide-right" data-content="updateProduct"
          data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar
          id="update-data-item">
         <div class="nk-block">
             <div class="row g-3">
-                <input type="hidden" id="up-id" name="_id">
                 <div class="col-12">
                     <div class="form-group">
                         <label class="form-label"
@@ -182,7 +234,7 @@
                         <label class="form-label"
                                for="up-price">Цена
                         </label>
-                        <input class="form-control" type="number" min="1" name="price" id="up-price">
+                        <input class="form-control" type="number" min="0" name="price" id="up-price">
                     </div>
                 </div>
                 <div class="col-12">
@@ -191,6 +243,54 @@
                                for="up-description">Описание
                         </label>
                         <textarea class="form-control" name="description" id="up-description"></textarea>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="up-whole">Весь
+                        </label>
+                        <input class="form-control" type="number" min="0" name="whole" id="up-whole">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="up-balance">Остаток
+                        </label>
+                        <input class="form-control" type="number" min="0" name="balance" id="up-balance">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="up-in-use">Статус
+                        </label>
+
+                        <select class="form-control" type="text" name="in_use" id="up-in-use">
+                            <option value="true">Да</option>
+                            <option value="false">Нет</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="up-section">Выберите
+                        </label>
+                        <select class="form-select" id="up-section" name="section_id"></select>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="up-is-new">Новый
+                        </label>
+                        <select class="form-control" type="text" name="is_new" id="up-is-new">
+                            <option value="true">Да</option>
+                            <option value="false">Нет</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-12">
@@ -216,13 +316,11 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
                 <div class="col-12">
@@ -241,12 +339,15 @@
 {% endblock %}
 {% block js %}
 <script>
-    $('li[data-li="control"]').addClass('active')
-    $('li[data-li="control-types"]').addClass('active')
+    $('li[data-li="panel"]').addClass('active')
+    $('li[data-li="panel-goods"]').addClass('active')
+
+    let createButton = $('#createButton');
 
     async function createItem() {
-        $('#createButton').prop('disabled', true)
+        createButton.prop('disabled', true)
         try {
+            console.log(getValues('#new-data-item'))
             let response = await fetch('/api/goods/', {
                 method: 'POST',
                 body: JSON.stringify(getValues('#new-data-item'))
@@ -256,68 +357,27 @@
             if (response._success === true) {
                 window.location.reload();
             } else {
-                $('#createButton').prop('disabled', false)
+                createButton.prop('disabled', false)
                 alert(response.message);
             }
 
         } catch (error) {
-            $('#createButton').prop('disabled', false)
+            createButton.prop('disabled', false)
             alertShow('waring', `${error.message}`);
         }
     }
 
-    $('.js-remove').click(async function () {
-        var itemId = $(this).parents('ul').data('id');
-
-        try {
-            let response = await fetch('/api/goods/' + itemId, {
-                method: 'DELETE'
-            });
-
-            response = await response.json();
-            if (response._success === true) {
-                window.location.reload();
-            } else {
-                alert(response.message);
-            }
-
-        } catch (error) {
-            alertShow('waring', `${error.message}`);
-        }
-    })
-
-    $('.js-update').click(async function () {
-        var itemId = $(this).parents('ul').data('id');
-
-        try {
-            let data = getValues('.js-cont[data-id="' + itemId + '"]')
-            let response = await fetch(`/api/goods/${itemId}`, {
-                method: 'PUT',
-                body: JSON.stringify(data)
-            });
-
-            response = await response.json();
-            if (response._success === true) {
-                alertShow('success', 'Обновлено')
-            } else {
-                alert(response.message);
-            }
-
-        } catch (error) {
-            alertShow('waring', `${error.message}`);
-        }
-    })
-
     let updatedId = null;
+    let upSectionSelect = $('#up-section');
+    let updateButton = $('#updateButton');
+
 
     async function openItem(itemId) {
         try {
-            $('#updateButton').prop('disabled', true)
             updatedId = null;
-            $('#up-title').val();
-            $('#up-price').val();
-            $('#up-description').text();
-            $('#photo-input-val').val();
+            updateButton.prop('disabled', true)
+
+            $('#update-data-item').find('input').val()
             $('#photo-img-src').prop('src', '');
 
             let response = await fetch(`/api/goods/${itemId}?response_type=json`, {
@@ -326,13 +386,57 @@
 
             response = await response.json();
             if (response._success === true) {
-                $('#updateButton').prop('disabled', false)
+                updateButton.prop('disabled', false)
                 updatedId = itemId;
+
                 $('#up-title').val(response.good.title);
-                $('#up-price').val(response.good.price);
+                $('#up-price').val(response.good.latitude);
                 $('#up-description').text(response.good.description);
+                $('#up-whole').val(response.good.whole);
+                $('#up-balance').val(response.good.balance);
+                if (response.good.in_use === false) {
+                    $(`#up-in-use option[value="false"]`).prop('selected', true);
+                }
+                if (response.good.is_new === false) {
+                    $(`#up-is-new option[value="false"]`).prop('selected', true);
+                }
                 $('#photo-input-val').val(response.good.photo);
                 $('#photo-img-src').prop('src', `/static/uploads/${response.good.photo}`);
+
+                let responseSectionId = response.good.section_id;
+                if (responseSectionId) {
+                    try {
+                        let response = await fetch(`/api/sections/${responseSectionId}?response_type=json`, {
+                            method: 'GET'
+                        });
+
+                        response = await response.json();
+                        if (response._success === true) {
+                            let responseSection = response.section
+
+                            if (responseSection) {
+                                var option = new Option(responseSection.title, responseSection.id, true, true);
+                                upSectionSelect.append(option).trigger('change');
+
+                                upSectionSelect.trigger({
+                                    type: 'select2:select',
+                                    params: {
+                                        data: responseSection
+                                    }
+                                });
+
+                            }
+
+                        } else {
+                            alert(response.message);
+                        }
+
+                    } catch (error) {
+                        console.log(error.message)
+
+                        alertShow('waring', `${error.message}`);
+                    }
+                }
 
             } else {
                 alert(response.message);
@@ -376,6 +480,7 @@
             alertShow('waring', `${error.message}`);
         }
     }
+
     async function removeItem(itemId) {
         try {
             let response = await fetch('/api/goods/' + itemId, {
@@ -393,6 +498,68 @@
             alertShow('waring', `${error.message}`);
         }
     };
+
+    $('#cf-section').select2({
+        placeholder: 'Выберите',
+        language: {
+            noResults: function () {
+                return "Не найден";
+            }
+        },
+        ajax: {
+            transport: async function (params, success, failure) {
+                try {
+                    const query = params.data.q || '';
+                    const response = await fetch(`/api/sections?response_type=json&query=${encodeURIComponent(query)}`);
+
+                    const data = await response.json();
+                    const results = data.sections.map(i => ({
+                        id: i.id,
+                        text: `${i.title}`,
+                        value: i.id
+                    }));
+
+                    success({results});
+                } catch (error) {
+                    failure(error);
+                }
+            },
+            processResults: function (data) {
+                return data;
+            }
+        }
+    });
+
+    $('#up-section').select2({
+        placeholder: 'Выберите',
+        language: {
+            noResults: function () {
+                return "Не найден";
+            }
+        },
+        ajax: {
+            transport: async function (params, success, failure) {
+                try {
+                    const query = params.data.q || '';
+                    const response = await fetch(`/api/sections?response_type=json&query=${encodeURIComponent(query)}`);
+
+                    const data = await response.json();
+                    const results = data.sections.map(i => ({
+                        id: i.id,
+                        text: `${i.title}`,
+                        value: i.id
+                    }));
+
+                    success({results});
+                } catch (error) {
+                    failure(error);
+                }
+            },
+            processResults: function (data) {
+                return data;
+            }
+        }
+    });
 
 </script>
 {% endblock %}

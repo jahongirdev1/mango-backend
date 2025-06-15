@@ -3,6 +3,7 @@ from sanic import Blueprint
 from admin.api.branches import branches_bp
 from admin.api.categories import categories_bp
 from admin.api.clients import clients_bp
+from admin.api.goods import goods_bp
 from admin.api.main import MainView
 from admin.api.profile import profile_bp
 from admin.api.sections import sections_bp
@@ -20,5 +21,6 @@ api_group = Blueprint.group(
     sections_bp,
     branches_bp,
     categories_bp,
+    goods_bp,
     url_prefix='/api'
 )
