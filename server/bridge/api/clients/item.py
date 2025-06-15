@@ -13,11 +13,11 @@ __all__ = [
 
 class ClientBridgeView(TemplateHTTPView):
     async def get(self, request):
-        phone = PhoneNumberUtils.normalize(request.json.get('phone'))
+        phone = PhoneNumberUtils.normalize(request.args.get('phone'))
         if not phone:
             return self.error(message='Отсуствует обязательный параметры "Телефон номер"')
 
-        uid = StrUtils.to_str(request.json.get('uid'))
+        uid = StrUtils.to_str(request.args.get('uid'))
         if not uid:
             return self.error(message='Отсуствует обязательный параметры "ХЭШ"')
 
