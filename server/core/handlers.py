@@ -83,11 +83,14 @@ class TemplateHTTPView(HTTPMethodView):
 
     def error(
         self,
-        message=None,
+        message: str = None,
         response_type: str = 'json',
+        status: int = 200,
     ):
         if response_type == 'json':
-            return response.json({'_success': False, 'message': StrUtils.to_str(message)}, dumps=encoder.encode)
+            return response.json({
+                '_success': False, 'message': StrUtils.to_str(message)
+            }, dumps=encoder.encode, status=status)
 
         elif response_type == 'text':
             return response.text(StrUtils.to_str(message) or '')

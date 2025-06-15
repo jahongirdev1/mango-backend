@@ -3,13 +3,13 @@ from sanic import Blueprint
 from bridge.api.ads.list import AdsListView
 from bridge.api.branches.list import BranchesBridgeView
 from bridge.api.categories.list import CategoriesBridgeView
-
-__all__ = ['bridge_bp']
-
+from bridge.api.clients.item import ClientBridgeView
+from bridge.api.clients.otp import OtpClientBridgeView
 from bridge.api.goods.list import GoodsBridgeView
 from bridge.api.promocodes.item import PromocodeBridgeView
-
 from bridge.api.sections.list import SectionsBridgeView
+
+__all__ = ['bridge_bp']
 
 _api_bp = Blueprint('bridge-api', url_prefix='api')
 
@@ -19,6 +19,8 @@ _api_bp.add_route(BranchesBridgeView.as_view(), '/branches/')
 _api_bp.add_route(SectionsBridgeView.as_view(), '/sections/')
 _api_bp.add_route(GoodsBridgeView.as_view(), '/goods/')
 _api_bp.add_route(PromocodeBridgeView.as_view(), '/promocodes/<code>/')
+_api_bp.add_route(ClientBridgeView.as_view(), '/client/')
+_api_bp.add_route(OtpClientBridgeView.as_view(), '/client/otp/<action>/')
 
 bridge_bp = Blueprint.group(
     _api_bp,
