@@ -38,6 +38,10 @@ class UsersListView(BaseAPIView):
             cond.append('u.status = {}')
             cond_vars.append(0)
 
+        if user['branch_id']:
+            cond.append('u.branch_id = {}')
+            cond_vars.append(user['branch_id'])
+
         cond, _ = set_counters(' AND '.join(cond))
 
         users = ListUtils.to_list_of_dicts(await db.fetch(
