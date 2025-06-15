@@ -33,7 +33,7 @@ class OtpClientBridgeView(TemplateHTTPView):
 
             await cache.set(f'mango:opt:{phone}', ujson.dumps({
                 'uid': uid,
-                'opt': self.generate_opt()
+                'otp': self.generate_opt()
             }), expire=60 * 10)
 
             return self.success()
@@ -53,7 +53,9 @@ class OtpClientBridgeView(TemplateHTTPView):
                         VALUES ($1, $2)
                         ON CONFLICT (phone) DO UPDATE SET uid = excluded.uid
                         RETURNING id, name, photo, uid, phone
-                        '''
+                        ''',
+                        phone,
+                        item['uid']
                     ) or {}
 
                     return self.success(data={'client': dict(client)})
