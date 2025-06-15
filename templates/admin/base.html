@@ -45,6 +45,7 @@
                                     </li>
                                 </ul>
                             </li>
+                            {% if _user and not _user.branch_id %}
                             <li data-li="control" class="nk-menu-item has-sub">
                                 <a class="nk-menu-link nk-menu-toggle">
                                     <span class="nk-menu-icon">
@@ -70,6 +71,8 @@
                                     </li>
                                 </ul>
                             </li>
+                            {% endif %}
+                            {% if _user and _user.branch_id %}
                             <li data-li="panel" class="nk-menu-item has-sub">
                                 <a class="nk-menu-link nk-menu-toggle">
                                     <span class="nk-menu-icon"><em class="icon ni ni-list"></em></span>
@@ -88,6 +91,7 @@
                                     </li>
                                 </ul>
                             </li>
+                            {% endif %}
                         </ul>
                     </div>
                 </div>
