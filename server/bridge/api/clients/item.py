@@ -32,7 +32,7 @@ class ClientBridgeView(TemplateHTTPView):
 
         if client and client['uid'] == uid:
             return self.success(data={
-                'client': client
+                'client': dict(client)
             })
 
         return self.error(message='Клиент не найден', status=401)
