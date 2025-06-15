@@ -17,7 +17,7 @@ class OtpClientBridgeView(TemplateHTTPView):
         # return "".join(random.choices("0123456789", k=4))
         return '1234'
 
-    async def get(self, request, action):
+    async def post(self, request, action):
         action = StrUtils.to_str(action)
         if not action:
             return self.error(message='Отсуствует обязательный параметры "action"')
