@@ -54,8 +54,8 @@ class OtpClientBridgeView(TemplateHTTPView):
                         ON CONFLICT (phone) DO UPDATE SET uid = excluded.uid
                         RETURNING id, name, photo, uid, phone
                         ''',
+                        item['uid'],
                         phone,
-                        item['uid']
                     ) or {}
 
                     return self.success(data={'client': dict(client)})
