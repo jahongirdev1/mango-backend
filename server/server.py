@@ -59,6 +59,6 @@ app.static('/static', os.path.join(settings.get('file_path'), 'static'))
 
 if __name__ == '__main__':
     try:
-        app.run('127.0.0.1', port=8780, access_log=True, auto_reload=True)
+        app.run('127.0.0.1', port=8788, access_log=True, auto_reload=True)
     except Exception as e:
         print(e)
