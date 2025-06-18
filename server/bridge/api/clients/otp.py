@@ -14,8 +14,8 @@ __all__ = [
 class OtpClientBridgeView(TemplateHTTPView):
     @classmethod
     def generate_opt(cls):
-        # return "".join(random.choices("0123456789", k=4))
-        return '1234'
+        # return "".join(random.choices("0123456789", k=6))
+        return '123456'
 
     async def post(self, request, action):
         action = StrUtils.to_str(action)
