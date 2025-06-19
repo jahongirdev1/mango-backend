@@ -11,7 +11,7 @@ __all__ = [
 
 class GoodsBridgeView(TemplateHTTPView):
     async def get(self, request):
-        cond, cond_vars = ['is_active'], []
+        cond, cond_vars = ['g.is_active'], []
         branch_id = IntUtils.to_int(request.args.get('branch_id'))
         if branch_id:
             cond.append('branch_id = {}')
@@ -20,8 +20,30 @@ class GoodsBridgeView(TemplateHTTPView):
         cond, _ = set_counters(' AND '.join(cond))
         items = ListUtils.to_list_of_dicts(await db.fetch(
             '''
-            SELECT id, title, price, description, photo, whole, is_new, in_use, balance, created_at
-            FROM control.goods
+            SELECT
+                g.id,
+                g.title,
+                g.price,
+                g.description,
+                g.photo,
+                g.whole,
+                g.is_new,
+                g.in_use,
+                g.balance,
+                g.created_at,
+                g.increment_step,
+                g.discount_percent,
+                (
+                    CASE WHEN s.id IS NOT NULL THEN JSONB_BUILD_OBJECT(
+                        'id', s.id,
+                        'title', s.title,
+                        'photo', s.photo,
+                        'position', s.position
+                    )
+                    END
+                ) AS section
+            FROM control.goods g
+            LEFT JOIN control.sections s ON g.section_id = s.id
             WHERE %s
             ''' % cond,
             *cond_vars

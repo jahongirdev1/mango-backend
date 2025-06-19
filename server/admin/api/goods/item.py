@@ -38,11 +38,32 @@ class GoodView(BaseAPIView):
         in_use = BoolUtils.to_bool(request.json.get('in_use'))
         balance = FloatUtils.to_float(request.json.get('balance'))
         section_id = IntUtils.to_int(request.json.get('section_id'))
+        discount_percent = FloatUtils.to_float(request.json.get('discount_percent'))
+        increment_step = IntUtils.to_int(request.json.get('increment_step'))
+
+        if not title:
+            return self.error(message='Отсуствует обязательный параметры "Имя"')
+
+        if price and price < 0:
+            return self.error(message='Не правильно ввели "Цену"')
+
+        if balance and balance < 0:
+            return self.error(message='Не правильно ввели "Остаток"')
+
+        if whole and whole < 0:
+            return self.error(message='Не правильно ввели "Весь"')
+
+        if discount_percent and discount_percent < 0:
+            return self.error(message='Не правильно ввели "Скидку"')
+
+        if increment_step and increment_step < 0:
+            return self.error(message='Не правильно ввели "шаг увеличения"')
 
         data = await db.fetchrow(
             '''
             UPDATE control.goods
-            SET title = $2, price = $3, description = $4, photo = $5, whole = $6, is_new = $7, in_use = $8, balance = $9, section_id = $10
+            SET title = $2, price = $3, description = $4, photo = $5, whole = $6, is_new = $7, in_use = $8, 
+                balance = $9, section_id = $10, discount_percent = $11, increment_step = $12
             WHERE id = $1
             RETURNING *
             ''',
@@ -55,7 +76,9 @@ class GoodView(BaseAPIView):
             is_new,
             in_use,
             balance,
-            section_id
+            section_id,
+            discount_percent,
+            increment_step
         )
 
         if not data:

@@ -29,7 +29,20 @@ class GoodsView(BaseAPIView):
         cond, _ = set_counters(' AND '.join(cond))
         items = ListUtils.to_list_of_dicts(await db.fetch(
             '''
-            SELECT id, title, price, description, photo, whole, is_new, in_use, is_active, balance, created_at
+            SELECT 
+                id, 
+                title, 
+                price, 
+                description, 
+                photo, 
+                whole, 
+                is_new, 
+                in_use, 
+                is_active, 
+                balance, 
+                created_at, 
+                increment_step,
+                discount_percent
             FROM control.goods
             WHERE %s
             ORDER BY id DESC
@@ -50,7 +63,9 @@ class GoodsView(BaseAPIView):
         is_new = BoolUtils.to_bool(request.json.get('is_new'))
         in_use = BoolUtils.to_bool(request.json.get('in_use'))
         balance = FloatUtils.to_float(request.json.get('balance'))
+        discount_percent = FloatUtils.to_float(request.json.get('discount_percent'))
         section_id = IntUtils.to_int(request.json.get('section_id'))
+        increment_step = IntUtils.to_int(request.json.get('increment_step'))
 
         branch_id = user['branch_id']
         if not branch_id:
@@ -71,10 +86,18 @@ class GoodsView(BaseAPIView):
         if whole and whole < 0:
             return self.error(message='Не правильно ввели "Весь"')
 
+        if discount_percent and discount_percent < 0:
+            return self.error(message='Не правильно ввели "Скидку"')
+
+        if increment_step and increment_step < 0:
+            return self.error(message='Не правильно ввели "шаг увеличения"')
+
         inserted_id = await db.fetchval(
             '''
-            INSERT INTO control.goods (title, price, description, photo, whole, is_new, in_use, balance, branch_id, section_id)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            INSERT INTO control.goods 
+            (title, price, description, photo, whole, is_new, in_use, balance, branch_id, section_id, discount_percent,
+             increment_step)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
             RETURNING id
             ''',
             title,
@@ -86,7 +109,9 @@ class GoodsView(BaseAPIView):
             in_use,
             balance,
             branch_id,
-            section_id
+            section_id,
+            discount_percent,
+            increment_step
         )
 
         if not inserted_id:

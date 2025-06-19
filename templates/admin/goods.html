@@ -168,7 +168,22 @@
                         </select>
                     </div>
                 </div>
-
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-increment-step">Шаг увеличения
+                        </label>
+                        <input class="form-control" type="number" min="0" name="increment_step" id="cf-increment-step">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-discount-percent">Скидка (процентах)
+                        </label>
+                        <input class="form-control" type="number" min="0" name="discount_percent" id="cf-discount-percent">
+                    </div>
+                </div>
                 <div class="col-12">
                     <label class="form-label" for="customFileNew" data-name="photo">Фото</label>
                     <div class="card-preview">
@@ -295,6 +310,22 @@
                 </div>
                 <div class="col-12">
                     <div class="form-group">
+                        <label class="form-label"
+                               for="up-increment-step">Шаг увеличения
+                        </label>
+                        <input class="form-control" type="number" min="0" name="increment_step" id="up-increment-step">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="up-discount-percent">Скидка (процентах)
+                        </label>
+                        <input class="form-control" type="number" min="0" name="discount_percent" id="up-discount-percent">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
                         <label class="form-label" for="customFile" data-name="photo">Фото</label>
                         <div class="card-preview">
                             <div class="card-inner">
@@ -394,6 +425,8 @@
                 $('#up-description').text(response.good.description);
                 $('#up-whole').val(response.good.whole);
                 $('#up-balance').val(response.good.balance);
+                $('#up-discount-percent').val(response.good.discount_percent);
+                $('#up-increment-step').val(response.good.increment_step);
                 if (response.good.in_use === false) {
                     $(`#up-in-use option[value="false"]`).prop('selected', true);
                 }
