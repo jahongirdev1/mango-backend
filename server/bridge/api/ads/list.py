@@ -20,7 +20,7 @@ class AdsListView(TemplateHTTPView):
         cond, _ = set_counters(' AND '.join(cond))
         items = ListUtils.to_list_of_dicts(await db.fetch(
             '''
-            SELECT id, title, image
+            SELECT id, photo, position
             FROM control.ads
             WHERE %s
             ''' % cond,
