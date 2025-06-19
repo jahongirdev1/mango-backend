@@ -17,11 +17,11 @@ class GoodsBridgeView(TemplateHTTPView):
         title = StrUtils.to_str(request.args.get('title'))
 
         if branch_id:
-            cond.append('branch_id = {}')
+            cond.append('g.branch_id = {}')
             cond_vars.append(branch_id)
 
         if title:
-            cond.append('title ILIKE {}')
+            cond.append('g.title ILIKE {}')
             cond_vars.append(f'%{title}%')
 
         cond, _ = set_counters(' AND '.join(cond))
