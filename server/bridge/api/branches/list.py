@@ -17,8 +17,13 @@ class BranchesBridgeView(TemplateHTTPView):
         now = datetime.now()
         cond, cond_vars = ['is_active'], []
 
+        query = StrUtils.to_str(request.args.get('query'))
         category_ids = StrUtils.to_str(request.args.get('category_ids'))
         category_ids = category_ids and ListUtils.to_list_of_ints(category_ids.split(','))
+
+        if query:
+            cond.append('b.title ILIKE {}')
+            cond_vars.append(f'%{query}%')
 
         if category_ids:
             cond.append('b.category_ids && {}')
