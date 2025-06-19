@@ -3,6 +3,7 @@ from core.handlers import TemplateHTTPView
 from core.tools import set_counters
 from utils.ints import IntUtils
 from utils.lists import ListUtils
+from utils.strs import StrUtils
 
 __all__ = [
     'GoodsBridgeView'
@@ -13,9 +14,15 @@ class GoodsBridgeView(TemplateHTTPView):
     async def get(self, request):
         cond, cond_vars = ['g.is_active'], []
         branch_id = IntUtils.to_int(request.args.get('branch_id'))
+        title = StrUtils.to_str(request.args.get('title'))
+
         if branch_id:
             cond.append('branch_id = {}')
             cond_vars.append(branch_id)
+
+        if title:
+            cond.append('title ILIKE {}')
+            cond_vars.append(f'%{title}%')
 
         cond, _ = set_counters(' AND '.join(cond))
         items = ListUtils.to_list_of_dicts(await db.fetch(
