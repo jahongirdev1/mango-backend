@@ -1,7 +1,7 @@
 from sanic import Blueprint
 
-from admin.api.adds.item import AdView
-from admin.api.adds.list import AdsView
+from admin.api.ads.item import AdView
+from admin.api.ads.list import AdsView
 
 ads_bp = Blueprint('ads', url_prefix='/ads')
 

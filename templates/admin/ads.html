@@ -228,10 +228,12 @@
     async function createItem() {
         $('#createButton').prop('disabled', true);
         try {
+            console.log('{{_user and _user.branch_id}}')
             let response = await fetch('/api/ads/', {
                 method: 'POST',
                 body: JSON.stringify({
                     ...getValues('#new-data-item'),
+                    branch_id: '{{_user and _user.branch_id}}'
                 })
             });
 
@@ -248,48 +250,6 @@
             alertShow('waring', `${error.message}`);
         }
     }
-
-    $('.js-remove').click(async function () {
-        var itemId = $(this).parents('ul').data('id');
-
-        try {
-            let response = await fetch('/api/ads/' + itemId, {
-                method: 'DELETE'
-            });
-
-            response = await response.json();
-            if (response._success === true) {
-                window.location.reload();
-            } else {
-                alert(response.message);
-            }
-
-        } catch (error) {
-            alertShow('waring', `${error.message}`);
-        }
-    })
-
-    $('.js-update').click(async function () {
-        var itemId = $(this).parents('ul').data('id');
-
-        try {
-            let data = getValues('.js-cont[data-id="' + itemId + '"]')
-            let response = await fetch(`/api/ads/${itemId}`, {
-                method: 'PUT',
-                body: JSON.stringify(data)
-            });
-
-            response = await response.json();
-            if (response._success === true) {
-                alertShow('success', 'Обновлено');
-            } else {
-                alert(response.message);
-            }
-
-        } catch (error) {
-            alertShow('waring', `${error.message}`);
-        }
-    })
 
     let updatedId = null;
 

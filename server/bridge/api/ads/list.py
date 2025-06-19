@@ -16,11 +16,13 @@ class AdsListView(TemplateHTTPView):
         if branch_id:
             cond.append('branch_id = {}')
             cond_vars.append(branch_id)
+        else:
+            cond.append('branch_id IS NULL')
 
         cond, _ = set_counters(' AND '.join(cond))
         items = ListUtils.to_list_of_dicts(await db.fetch(
             '''
-            SELECT id, photo, position
+            SELECT id, title, photo, position
             FROM control.ads
             WHERE %s
             ''' % cond,

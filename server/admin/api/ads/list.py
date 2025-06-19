@@ -12,13 +12,12 @@ class AdsView(BaseAPIView):
     async def get(self, request, user):
         branch_id = user['branch_id']
 
-        if not branch_id:
-            return self.error(message='Отсуствует обязательный параметры "Филиал"')
-
         cond, cond_vars = ['is_active'], []
         if branch_id:
             cond.append('branch_id = {}')
             cond_vars.append(branch_id)
+        else:
+            cond.append('branch_id IS NULL')
 
         query = StrUtils.to_str(request.args.get('query'))
         if query:
@@ -44,17 +43,10 @@ class AdsView(BaseAPIView):
         title = StrUtils.to_str(request.json.get('title'))
         photo = StrUtils.to_str(request.json.get('photo'))
         position = IntUtils.to_int(request.json.get('position'))
-
-        if user['branch_id']:
-            branch_id = user['branch_id']
-        else:
-            branch_id = IntUtils.to_int(request.json.get('branch_id'))
+        branch_id = IntUtils.to_int(request.json.get('branch_id'))
 
         if not title:
             return self.error(message='Отсуствует обязательный параметры "Имя"')
-
-        if not branch_id:
-            return self.error(message='Отсуствует обязательный параметры "Филиал"')
 
         inserted_id = await db.fetchval(
             '''
