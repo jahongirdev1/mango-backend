@@ -8,6 +8,7 @@ from admin.api.main import MainView
 from admin.api.profile import profile_bp
 from admin.api.sections import sections_bp
 from admin.api.users import users_bp
+from admin.api.work_schedule import work_schedule_bp
 
 main_bp = Blueprint('main', url_prefix='/')
 
@@ -22,5 +23,6 @@ api_group = Blueprint.group(
     branches_bp,
     categories_bp,
     goods_bp,
+    work_schedule_bp,
     url_prefix='/api'
 )

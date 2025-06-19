@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from core.db import db
 from core.handlers import TemplateHTTPView
 from core.tools import set_counters
@@ -12,6 +14,7 @@ from utils.strs import StrUtils
 
 class BranchesBridgeView(TemplateHTTPView):
     async def get(self, request):
+        now = datetime.now()
         cond, cond_vars = ['is_active'], []
 
         category_ids = StrUtils.to_str(request.args.get('category_ids'))
@@ -21,7 +24,7 @@ class BranchesBridgeView(TemplateHTTPView):
             cond.append('b.category_ids && {}')
             cond_vars.append(category_ids)
 
-        cond, _ = set_counters(' AND '.join(cond))
+        cond, _ = set_counters(' AND '.join(cond), counter=2)
         items = ListUtils.to_list_of_dicts(await db.fetch(
             '''
             SELECT
@@ -47,11 +50,20 @@ class BranchesBridgeView(TemplateHTTPView):
                     ))
                     FROM control.categories c
                     WHERE id = ANY(b.category_ids)
-                ) AS categories
+                ) AS categories,
+                (
+                    SELECT JSON_AGG(JSONB_BUILD_OBJECT(
+                        'started_at', w.started_at,
+                        'stopped_at', w.stopped_at
+                    ))
+                    FROM control.work_schedule w
+                    WHERE w.branch_id = b.id AND day = $1
+                ) AS work_schedule
             FROM control.branches b
             WHERE %s
             ORDER BY b.rating DESC
             ''' % cond,
+            now.isoweekday(),
             *cond_vars
         ))
 
