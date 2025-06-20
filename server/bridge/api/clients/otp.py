@@ -52,7 +52,7 @@ class OtpClientBridgeView(TemplateHTTPView):
                         INSERT INTO control.clients (uid, phone)
                         VALUES ($1, $2)
                         ON CONFLICT (phone) DO UPDATE SET uid = excluded.uid
-                        RETURNING id, name, photo, uid, phone
+                        RETURNING id, last_name, first_name, photo, uid, phone
                         ''',
                         item['uid'],
                         phone,

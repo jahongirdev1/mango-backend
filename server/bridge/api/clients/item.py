@@ -23,7 +23,7 @@ class ClientBridgeView(TemplateHTTPView):
 
         client = await db.fetchrow(
             '''
-            SELECT id, name, photo, uid, phone
+            SELECT id, first_name, last_name, photo, uid, phone
             FROM control.clients
             WHERE phone = $1
             ''',
@@ -46,7 +46,8 @@ class ClientBridgeView(TemplateHTTPView):
         if not uid:
             return self.error(message='Отсуствует обязательный параметры "ХЭШ"')
 
-        name = StrUtils.to_str(request.json.get('name'))
+        first_name = StrUtils.to_str(request.json.get('first_name'))
+        last_name = StrUtils.to_str(request.json.get('last_name'))
         photo = StrUtils.to_str(request.json.get('photo'))
         latitude = FloatUtils.to_float(request.json.get('latitude'))
         longitude = FloatUtils.to_float(request.json.get('longitude'))
@@ -54,13 +55,14 @@ class ClientBridgeView(TemplateHTTPView):
         client = await db.fetchrow(
             '''
             UPDATE control.clients
-            SET name = $3, photo = $4, latitude = $5, longitude = $6
+            SET first_name = $3, last_name = $4, photo = $5, latitude = $6, longitude = $7
             WHERE uid = $1 AND phone = $2
             RETURNING *
             ''',
             uid,
             phone,
-            name,
+            first_name,
+            last_name,
             photo,
             latitude,
             longitude
