@@ -6,6 +6,7 @@ from bridge.api.categories.list import CategoriesBridgeView
 from bridge.api.clients.item import ClientBridgeView
 from bridge.api.clients.otp import OtpClientBridgeView
 from bridge.api.goods.list import GoodsBridgeView
+from bridge.api.items.list import ItemsBridgeView
 from bridge.api.promocodes.item import PromocodeBridgeView
 from bridge.api.sections.list import SectionsBridgeView
 
@@ -20,6 +21,7 @@ _api_bp.add_route(SectionsBridgeView.as_view(), '/sections/')
 _api_bp.add_route(GoodsBridgeView.as_view(), '/goods/')
 _api_bp.add_route(PromocodeBridgeView.as_view(), '/promocodes/<code>/')
 _api_bp.add_route(ClientBridgeView.as_view(), '/client/')
+_api_bp.add_route(ItemsBridgeView.as_view(), '/ItemsBridgeView/')
 _api_bp.add_route(OtpClientBridgeView.as_view(), '/client/otp/<action>/')
 
 bridge_bp = Blueprint.group(
