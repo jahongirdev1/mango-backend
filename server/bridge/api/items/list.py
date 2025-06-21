@@ -104,7 +104,10 @@ class ItemsBridgeView(TemplateHTTPView):
             VALUES ($1, $2, $3)
             ON CONFLICT (good_id, uid) DO UPDATE SET count = excluded.count
             RETURNING id
-            '''
+            ''',
+            good_id,
+            uid,
+            count
         )
 
         if not inserted_id:
