@@ -20,7 +20,7 @@ class PromocodeBridgeView(TemplateHTTPView):
         if not branch_id:
             return self.error(message='Промокод не найден')
 
-        val = await db.fetchval(
+        promocode_id = await db.fetchval(
             '''
             SELECT id
             FROM control.promocodes
@@ -28,10 +28,11 @@ class PromocodeBridgeView(TemplateHTTPView):
             ''',
             code,
             branch_id
-        ) and True or False
+        )
 
         return self.success(
             data={
-                'is_valid': val
+                'is_valid': promocode_id and True or False,
+                'promocode_id': promocode_id,
             }
         )
