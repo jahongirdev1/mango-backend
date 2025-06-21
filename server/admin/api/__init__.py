@@ -7,6 +7,7 @@ from admin.api.clients import clients_bp
 from admin.api.goods import goods_bp
 from admin.api.main import MainView
 from admin.api.profile import profile_bp
+from admin.api.promocodes import promocodes_bp
 from admin.api.sections import sections_bp
 from admin.api.users import users_bp
 from admin.api.work_schedule import work_schedule_bp
@@ -26,5 +27,6 @@ api_group = Blueprint.group(
     goods_bp,
     work_schedule_bp,
     ads_bp,
+    promocodes_bp,
     url_prefix='/api'
 )

@@ -15,7 +15,7 @@
                 <div class="card-title-group">
                     <div class="card-title">
                         <h5 class="title">
-                            Секции
+                            Промокоды
                         </h5>
                     </div>
                     <div class="nk-block-head-content">
@@ -52,7 +52,7 @@
                             <div class="nk-tb-col"><span>Название</span></div>
                             <div class="nk-tb-col nk-tb-col-tools text-end"></div>
                         </div>
-                        {% for item in ads %}
+                        {% for item in promocodes %}
                         <div class="nk-tb-item js-cont" data-id="{{ item.id }}">
                             <div class="nk-tb-col">
                                 <span>{{item.title}}</span>
@@ -103,43 +103,29 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label class="form-label"
-                               for="cf-position">Позиция
+                               for="cf-code">Код
                         </label>
-                        <input class="form-control" type="number" min="0" name="position" id="cf-position">
+                        <input class="form-control" type="text" name="code" id="cf-code">
                     </div>
                 </div>
                 <div class="col-12">
-                    <label class="form-label" for="customFileNew" data-name="photo">Фото</label>
-                    <div class="card-preview">
-                        <div class="card-inner">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="card card-bordered photo-place"
-                                         data-name="photo">
-                                        <img class="card-img-top" alt="">
-                                        <div class="card-inner">
-                                            <div class="form-control-wrap">
-                                                <div class="form-file">
-                                                    <input type="hidden"
-                                                           name="photo"
-                                                           value="">
-                                                    <input type="file"
-                                                           multiple=""
-                                                           class="form-file-input"
-                                                           id="customFileNew"
-                                                           accept="image/*">
-                                                    <label class="form-file-label"
-                                                           for="customFileNew">Choose
-                                                        file
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-percent">Процент
+                        </label>
+                        <input class="form-control" type="number" min="0" name="percent" id="cf-percent">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-in-use">Статус
+                        </label>
 
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <select class="form-control" type="text" name="in_use" id="cf-in-use">
+                            <option value="true">Да</option>
+                            <option value="false">Нет</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-12">
@@ -159,7 +145,6 @@
          id="update-data-item">
         <div class="nk-block">
             <div class="row g-3">
-                <input type="hidden" id="up-id" name="_id">
                 <div class="col-12">
                     <div class="form-group">
                         <label class="form-label"
@@ -171,39 +156,29 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label class="form-label"
-                               for="up-position">Позиция
+                               for="up-code">Код
                         </label>
-                        <input class="form-control" type="number" min="1" name="position" id="up-position">
+                        <input class="form-control" type="text" name="code" id="up-code">
                     </div>
                 </div>
                 <div class="col-12">
                     <div class="form-group">
-                        <label class="form-label" for="customFile" data-name="photo">Фото</label>
-                        <div class="card-preview">
-                            <div class="card-inner">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="card card-bordered photo-place" data-name="photo">
-                                            <img class="card-img-top" id="photo-img-src"
-                                                 alt="">
-                                            <div class="card-inner">
-                                                <div class="form-control-wrap">
-                                                    <div class="form-file">
-                                                        <input type="hidden" name="photo" id="photo-input-val">
-                                                        <input type="file" multiple=""
-                                                               class="form-file-input"
-                                                               id="customFile">
-                                                        <label class="form-file-label"
-                                                               for="customFile">Choose file
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <label class="form-label"
+                               for="up-percent">Процент
+                        </label>
+                        <input class="form-control" type="number" min="0" name="percent" id="up-percent">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="up-in-use">Статус
+                        </label>
+
+                        <select class="form-control" type="text" name="in_use" id="up-in-use">
+                            <option value="true">Да</option>
+                            <option value="false">Нет</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-12">
@@ -224,17 +199,17 @@
 <script>
     if ('{{_user and _user.branch_id or ""}}') {
         $('li[data-li="panel"]').addClass('active');
-        $('li[data-li="panel-ads"]').addClass('active');
+        $('li[data-li="panel-promocodes"]').addClass('active');
     } else {
         $('li[data-li="control"]').addClass('active');
-        $('li[data-li="control-ads"]').addClass('active');
+        $('li[data-li="control-promocodes"]').addClass('active');
     }
 
     async function createItem() {
         $('#createButton').prop('disabled', true);
         try {
-            console.log('{{_user and _user.branch_id}}')
-            let response = await fetch('/api/ads/', {
+            console.log(getValues('#new-data-item'))
+            let response = await fetch('/api/promocodes/', {
                 method: 'POST',
                 body: JSON.stringify({
                     ...getValues('#new-data-item'),
@@ -266,7 +241,7 @@
             $('#up-title #up-position #photo-input-val').val();
             $('#photo-img-src').prop('src', '');
 
-            let response = await fetch(`/api/ads/${itemId}?response_type=json`, {
+            let response = await fetch(`/api/promocodes/${itemId}?response_type=json`, {
                 method: 'GET'
             });
 
@@ -275,11 +250,12 @@
             if (response._success === true) {
                 $('#updateButton').prop('disabled', false)
                 updatedId = itemId;
-                $('#up-title').val(response.ad.title);
-                $('#up-position').val(response.ad.position);
-                $('#photo-input-val').val(response.ad.photo);
-                if (response.ad.photo) {
-                    $('#photo-img-src').prop('src', `/static/uploads/${response.ad.photo}`);
+
+                $('#up-title').val(response.promocode.title);
+                $('#up-code').val(response.promocode.code);
+                $('#up-percent').val(response.promocode.percent);
+                if (response.promocode.in_use === false) {
+                    $(`#up-in-use option[value="false"]`).prop('selected', true);
                 }
 
             } else {
@@ -292,23 +268,12 @@
         }
     }
 
-    $('[type="file"]').change(function () {
-        var trigger_name = $(this).parents('.photo-place').data('name');
-        var input_name = $(this).closest('.photo-place').find('[name="' + trigger_name + '"]');
-        let image = $(this).closest('.photo-place').find('img')
-        uploadImage($(this).attr('id')).then(function (data) {
-            input_name.val(String(data['file_name']));
-            image.attr('src', '/static/uploads/' + String(data['file_name']));
-        }, function (data) {
-            alert('error');
-        });
-    })
 
     async function updateItem() {
         try {
             if (updatedId) {
                 let data = getValues('#update-data-item')
-                let response = await fetch(`/api/ads/${updatedId}`, {
+                let response = await fetch(`/api/promocodes/${updatedId}`, {
                     method: 'PUT',
                     body: JSON.stringify(data)
                 });
@@ -328,7 +293,7 @@
 
     async function removeItem(itemId) {
         try {
-            let response = await fetch('/api/ads/' + itemId, {
+            let response = await fetch('/api/promocodes/' + itemId, {
                 method: 'DELETE'
             });
 
