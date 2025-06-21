@@ -21,7 +21,7 @@ _api_bp.add_route(SectionsBridgeView.as_view(), '/sections/')
 _api_bp.add_route(GoodsBridgeView.as_view(), '/goods/')
 _api_bp.add_route(PromocodeBridgeView.as_view(), '/promocodes/<code>/')
 _api_bp.add_route(ClientBridgeView.as_view(), '/client/')
-_api_bp.add_route(ItemsBridgeView.as_view(), '/ItemsBridgeView/')
+_api_bp.add_route(ItemsBridgeView.as_view(), '/items/')
 _api_bp.add_route(OtpClientBridgeView.as_view(), '/client/otp/<action>/')
 
 bridge_bp = Blueprint.group(
