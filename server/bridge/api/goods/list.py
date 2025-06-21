@@ -40,6 +40,7 @@ class GoodsBridgeView(TemplateHTTPView):
                 g.created_at,
                 g.increment_step,
                 g.discount_percent,
+                g.branch_id,
                 (
                     CASE WHEN s.id IS NOT NULL THEN JSONB_BUILD_OBJECT(
                         'id', s.id,
