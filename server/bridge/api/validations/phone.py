@@ -8,7 +8,7 @@ __all__ = [
 
 class PhoneValidationsBridgeView(TemplateHTTPView):
     async def get(self, request, code):
-        phone = PhoneNumberUtils.normalize(request.json.get('phone'))
+        phone = PhoneNumberUtils.normalize(request.args.get('phone'))
         return self.success(
             data={
                 'is_valid': phone and True or False
