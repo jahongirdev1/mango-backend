@@ -39,7 +39,7 @@ class GoodView(BaseAPIView):
         balance = FloatUtils.to_float(request.json.get('balance'))
         section_id = IntUtils.to_int(request.json.get('section_id'))
         discount_percent = FloatUtils.to_float(request.json.get('discount_percent'))
-        increment_step = IntUtils.to_int(request.json.get('increment_step'))
+        increment_step = FloatUtils.to_float(request.json.get('increment_step'))
 
         if not title:
             return self.error(message='Отсуствует обязательный параметры "Имя"')

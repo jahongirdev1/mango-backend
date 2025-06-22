@@ -1,5 +1,6 @@
 from core.db import db
 from core.handlers import TemplateHTTPView
+from utils.floats import FloatUtils
 from utils.ints import IntUtils
 from utils.lists import ListUtils
 
@@ -26,6 +27,10 @@ class ItemsBridgeView(TemplateHTTPView):
                 i.count,
                 i.uid,
                 g.title AS good_title,
+                g.description AS good_description,
+                g.discount_percent AS good_discount_percent,
+                g.increment_step AS good_increment_step,
+                g.balance AS good_balance,
                 g.price AS good_price,
                 g.photo AS good_photo,
                 g.whole AS good_whole
@@ -39,7 +44,12 @@ class ItemsBridgeView(TemplateHTTPView):
         data = []
         total_summ = 0
         for item in items:
-            summ = item['good_price'] and item['good_price'] * item['count'] or 0
+            good_price = item['good_price']
+            if good_price:
+                if item['good_discount_percent']:
+                    good_price = good_price * (100 - item['good_discount_percent']) / 100
+
+            summ = good_price and good_price * item['count'] or 0
             total_summ += summ
 
             data.append({
@@ -48,9 +58,13 @@ class ItemsBridgeView(TemplateHTTPView):
                 'count': item['count'],
                 'uid': item['uid'],
                 'good_title': item['good_title'],
+                'good_description': item['good_description'],
+                'good_discount_percent': item['good_discount_percent'],
+                'good_increment_step': item['good_increment_step'],
                 'good_price': item['good_price'],
                 'good_photo': item['good_photo'],
                 'good_whole': item['good_whole'],
+                'good_balance': item['good_balance'],
                 'sum': summ
             })
 
@@ -79,7 +93,7 @@ class ItemsBridgeView(TemplateHTTPView):
             return self.error(message='Отсуствует обязательный параметр "uid"')
 
         good_id = IntUtils.to_int(request.json.get('good_id'))
-        count = IntUtils.to_int(request.json.get('count'), default=1)
+        count = FloatUtils.to_float(request.json.get('count'), default=1)
         if good_id:
             good = await db.fetchrow(
                 '''

@@ -65,7 +65,7 @@ class GoodsView(BaseAPIView):
         balance = FloatUtils.to_float(request.json.get('balance'))
         discount_percent = FloatUtils.to_float(request.json.get('discount_percent'))
         section_id = IntUtils.to_int(request.json.get('section_id'))
-        increment_step = IntUtils.to_int(request.json.get('increment_step'))
+        increment_step = FloatUtils.to_float(request.json.get('increment_step'))
 
         branch_id = user['branch_id']
         if not branch_id:
