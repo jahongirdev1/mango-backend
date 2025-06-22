@@ -9,6 +9,7 @@ from bridge.api.goods.list import GoodsBridgeView
 from bridge.api.items.list import ItemsBridgeView
 from bridge.api.promocodes.item import PromocodeBridgeView
 from bridge.api.sections.list import SectionsBridgeView
+from bridge.api.validations.phone import PhoneValidationsBridgeView
 
 __all__ = ['bridge_bp']
 
@@ -23,6 +24,7 @@ _api_bp.add_route(PromocodeBridgeView.as_view(), '/promocodes/<code>/')
 _api_bp.add_route(ClientBridgeView.as_view(), '/client/')
 _api_bp.add_route(ItemsBridgeView.as_view(), '/items/')
 _api_bp.add_route(OtpClientBridgeView.as_view(), '/client/otp/<action>/')
+_api_bp.add_route(PhoneValidationsBridgeView.as_view(), '/validations/phone/')
 
 bridge_bp = Blueprint.group(
     _api_bp,
