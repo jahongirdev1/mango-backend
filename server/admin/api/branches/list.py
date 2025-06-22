@@ -22,7 +22,7 @@ class BranchesView(BaseAPIView):
         cond, _ = set_counters(' AND '.join(cond))
         items = ListUtils.to_list_of_dicts(await db.fetch(
             '''
-            SELECT id, title, photo, latitude, longitude, min_order_time, rating, promotion_text, phone, in_use, is_active, updated_at, created_at, category_ids, icon, max_order_time, min_order_sum, is_store
+            SELECT id, title, photo, latitude, longitude, min_order_time, rating, promotion_text, phone, in_use, is_active, updated_at, created_at, category_ids, icon, max_order_time, min_order_sum, is_store, min_delivery_sum
             FROM control.branches
             WHERE %s
             ORDER BY id DESC
@@ -47,14 +47,15 @@ class BranchesView(BaseAPIView):
         in_use = BoolUtils.to_bool(request.json.get('in_use'))
         is_store = BoolUtils.to_bool(request.json.get('is_store'))
         category_ids = ListUtils.to_list_of_ints(request.json.get('category_ids'))
+        min_delivery_sum = FloatUtils.to_float(request.json.get('min_delivery_sum'))
 
         if not title:
             return self.error(message='Отсуствует обязательный параметры "Имя"')
 
         inserted_id = await db.fetchval(
             '''
-            INSERT INTO control.branches (title, photo, latitude, longitude, min_order_time, promotion_text, phone, in_use, category_ids, max_order_time, min_order_sum, is_store)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+            INSERT INTO control.branches (title, photo, latitude, longitude, min_order_time, promotion_text, phone, in_use, category_ids, max_order_time, min_order_sum, is_store, min_delivery_sum)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
             RETURNING id
             ''',
             title,
@@ -68,7 +69,8 @@ class BranchesView(BaseAPIView):
             category_ids,
             max_order_time,
             min_order_sum,
-            is_store
+            is_store,
+            min_delivery_sum
         )
 
         if not inserted_id:

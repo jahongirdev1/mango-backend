@@ -131,6 +131,14 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label class="form-label"
+                               for="cf-min-delivery-sum">Мин сумма доставки
+                        </label>
+                        <input class="form-control" type="number" min="0" name="min_delivery_sum" id="cf-min-delivery-sum">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
                                for="cf-max-order-time">Макс время обработки заказа (мин)
                         </label>
                         <input class="form-control" type="number" min="0" name="max_order_time" id="cf-max-order-time">
@@ -296,6 +304,14 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label class="form-label"
+                               for="up-min-delivery-sum">Мин сумма доставки
+                        </label>
+                        <input class="form-control" type="number" min="0" name="min_delivery_sum" id="up-min-delivery-sum">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
                                for="up-promotion-text">Акционный текст
                         </label>
                         <input class="form-control" type="text" name="promotion_text" id="up-promotion-text">
@@ -414,48 +430,6 @@
         }
     }
 
-    $('.js-remove').click(async function () {
-        var itemId = $(this).parents('ul').data('id');
-
-        try {
-            let response = await fetch('/api/branches/' + itemId, {
-                method: 'DELETE'
-            });
-
-            response = await response.json();
-            if (response._success === true) {
-                window.location.reload();
-            } else {
-                alert(response.message);
-            }
-
-        } catch (error) {
-            alertShow('waring', `${error.message}`);
-        }
-    })
-
-    $('.js-update').click(async function () {
-        var itemId = $(this).parents('ul').data('id');
-
-        try {
-            let data = getValues('.js-cont[data-id="' + itemId + '"]')
-            let response = await fetch(`/api/branches/${itemId}`, {
-                method: 'PUT',
-                body: JSON.stringify(data)
-            });
-
-            response = await response.json();
-            if (response._success === true) {
-                alertShow('success', 'Обновлено')
-            } else {
-                alert(response.message);
-            }
-
-        } catch (error) {
-            alertShow('waring', `${error.message}`);
-        }
-    })
-
     let updatedId = null;
     let upCategorySelect = $('#up-category');
 
@@ -464,7 +438,7 @@
             updatedId = null;
 
             $('#updateButton').prop('disabled', true)
-            $('#up-title, #up-latitude, #up-longitude, #up-min-order-time, #up-max-order-time, #up-promotion-text, #up-phone, #photo-input-val').val();
+            $('#update-data-item input').val();
             $('#photo-img-src').prop('src', '');
 
             let response = await fetch(`/api/branches/${itemId}?response_type=json`, {
@@ -480,6 +454,7 @@
                 $('#up-longitude').val(response.branch.longitude);
                 $('#up-min-order-time').val(response.branch.min_order_time);
                 $('#up-max-order-time').val(response.branch.max_order_time);
+                $('#up-min-delivery-sum').val(response.branch.min_delivery_sum);
                 $('#up-min-order-sum').val(response.branch.min_order_sum);
                 $('#up-promotion-text').val(response.branch.promotion_text);
                 $('#up-phone').val(response.branch.phone);
