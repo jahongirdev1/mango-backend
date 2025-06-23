@@ -130,6 +130,10 @@ class ItemsBridgeView(TemplateHTTPView):
         return self.success()
 
     async def delete(self, request):
+        uid = StrUtils.to_str(request.json.get('uid'))
+        if not uid:
+            return self.error(message='Отсуствует обязательный параметр "uid"')
+
         ids = ListUtils.to_list_of_ints(request.json.get('ids'))
         if not ids:
             return self.error(message='Отсуствует обязательный параметр "ids"')
@@ -137,9 +141,10 @@ class ItemsBridgeView(TemplateHTTPView):
         await db.execute(
             '''
             DELETE FROM control.items
-            WHERE id = ANY ($1)
+            WHERE uid = $1 AND good_id = ANY ($2)
             RETURNING id
             ''',
+            uid,
             ids
         )
 
