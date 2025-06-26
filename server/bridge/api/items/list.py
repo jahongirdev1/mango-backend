@@ -33,7 +33,8 @@ class ItemsBridgeView(TemplateHTTPView):
                 g.balance AS good_balance,
                 g.price AS good_price,
                 g.photo AS good_photo,
-                g.whole AS good_whole
+                g.whole AS good_whole,
+                g.branch_id AS good_branch_id
             FROM control.items i
             JOIN control.goods g ON i.good_id = g.id
             WHERE i.uid = $1
@@ -65,6 +66,7 @@ class ItemsBridgeView(TemplateHTTPView):
                 'good_photo': item['good_photo'],
                 'good_whole': item['good_whole'],
                 'good_balance': item['good_balance'],
+                'good_branch_id': item['good_branch_id'],
                 'sum': summ
             })
 
