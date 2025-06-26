@@ -10,6 +10,7 @@ from admin.api.profile import profile_bp
 from admin.api.promocodes import promocodes_bp
 from admin.api.sections import sections_bp
 from admin.api.users import users_bp
+from admin.api.words import words_bp
 from admin.api.work_schedule import work_schedule_bp
 
 main_bp = Blueprint('main', url_prefix='/')
@@ -28,5 +29,6 @@ api_group = Blueprint.group(
     work_schedule_bp,
     ads_bp,
     promocodes_bp,
+    words_bp,
     url_prefix='/api'
 )
