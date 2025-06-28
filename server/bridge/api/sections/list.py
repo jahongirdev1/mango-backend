@@ -28,7 +28,7 @@ class SectionsBridgeView(TemplateHTTPView):
         cond, _ = set_counters(' AND '.join(cond))
         items = ListUtils.to_list_of_dicts(await db.fetch(
             '''
-            SELECT id, title, photo
+            SELECT id, title, photo, parent_id
             FROM control.sections
             WHERE %s
             ''' % cond,
