@@ -28,7 +28,7 @@ class SectionsView(BaseAPIView):
         cond, _ = set_counters(' AND '.join(cond))
         items = ListUtils.to_list_of_dicts(await db.fetch(
             '''
-            SELECT id, title, photo, position, branch_id
+            SELECT id, title, photo, position, branch_id, parent_id
             FROM control.sections
             WHERE %s
             ORDER BY id DESC
@@ -44,6 +44,7 @@ class SectionsView(BaseAPIView):
         title = StrUtils.to_str(request.json.get('title'))
         photo = StrUtils.to_str(request.json.get('photo'))
         position = IntUtils.to_int(request.json.get('position'))
+        parent_id = IntUtils.to_int(request.json.get('parent_id'))
 
         if user['branch_id']:
             branch_id = user['branch_id']
@@ -58,14 +59,15 @@ class SectionsView(BaseAPIView):
 
         inserted_id = await db.fetchval(
             '''
-            INSERT INTO control.sections (title, photo, position, branch_id)
-            VALUES ($1, $2, $3, $4)
+            INSERT INTO control.sections (title, photo, position, branch_id, parent_id)
+            VALUES ($1, $2, $3, $4, $5)
             RETURNING id
             ''',
             title,
             photo,
             position,
-            branch_id
+            branch_id,
+            parent_id
         )
 
         if not inserted_id:

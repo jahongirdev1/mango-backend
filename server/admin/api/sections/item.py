@@ -26,6 +26,7 @@ class SectionView(BaseAPIView):
         title = StrUtils.to_str(request.json.get('title'))
         photo = StrUtils.to_str(request.json.get('photo'))
         position = IntUtils.to_int(request.json.get('position'))
+        parent_id = IntUtils.to_int(request.json.get('parent_id'))
 
         section_id = IntUtils.to_int(section_id)
         if not section_id:
@@ -34,7 +35,7 @@ class SectionView(BaseAPIView):
         data = await db.fetchrow(
             '''
             UPDATE control.sections
-            SET title = $2, photo = $3, position = $4
+            SET title = $2, photo = $3, position = $4, parent_id = $5
             WHERE id = $1
             RETURNING *
             ''',
@@ -42,6 +43,7 @@ class SectionView(BaseAPIView):
             title,
             photo,
             position,
+            parent_id
         )
 
         if not data:

@@ -109,6 +109,15 @@
                     </div>
                 </div>
                 <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="cf-section">Выберите
+                        </label>
+                        <select class="form-select" id="cf-section" name="parent_id"></select>
+                        <button class="form-control" id="clearSingleSelection">Очистить</button>
+                    </div>
+                </div>
+                <div class="col-12">
                     <label class="form-label" for="customFileNew" data-name="photo">Фото</label>
                     <div class="card-preview">
                         <div class="card-inner">
@@ -174,6 +183,15 @@
                                for="up-position">Позиция
                         </label>
                         <input class="form-control" type="number" min="1" name="position" id="up-position">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label"
+                               for="up-section">Выберите
+                        </label>
+                        <select class="form-select" id="up-section" name="parent_id"></select>
+                        <button class="form-control" id="clearUpSection">Очистить</button>
                     </div>
                 </div>
                 <div class="col-12">
@@ -249,49 +267,9 @@
         }
     }
 
-    $('.js-remove').click(async function () {
-        var itemId = $(this).parents('ul').data('id');
-
-        try {
-            let response = await fetch('/api/sections/' + itemId, {
-                method: 'DELETE'
-            });
-
-            response = await response.json();
-            if (response._success === true) {
-                window.location.reload();
-            } else {
-                alert(response.message);
-            }
-
-        } catch (error) {
-            alertShow('waring', `${error.message}`);
-        }
-    })
-
-    $('.js-update').click(async function () {
-        var itemId = $(this).parents('ul').data('id');
-
-        try {
-            let data = getValues('.js-cont[data-id="' + itemId + '"]')
-            let response = await fetch(`/api/sections/${itemId}`, {
-                method: 'PUT',
-                body: JSON.stringify(data)
-            });
-
-            response = await response.json();
-            if (response._success === true) {
-                alertShow('success', 'Обновлено');
-            } else {
-                alert(response.message);
-            }
-
-        } catch (error) {
-            alertShow('waring', `${error.message}`);
-        }
-    })
 
     let updatedId = null;
+    let upSectionSelect = $('#up-section');
 
     async function openItem(itemId) {
         try {
@@ -312,7 +290,47 @@
                 $('#up-title').val(response.section.title);
                 $('#up-position').val(response.section.position);
                 $('#photo-input-val').val(response.section.photo);
-                $('#photo-img-src').prop('src', `/static/uploads/${response.section.photo}`);
+
+                if (response.section.photo) {
+                    $('#photo-img-src').prop('src', `/static/uploads/${response.section.photo}`);
+
+                }
+
+                let parentSectionId = response.section.parent_id;
+                if (parentSectionId) {
+                    try {
+                        let response = await fetch(`/api/sections/${parentSectionId}?response_type=json`, {
+                            method: 'GET'
+                        });
+
+                        response = await response.json();
+                        if (response._success === true) {
+                            let responseSection = response.section
+
+                            if (responseSection) {
+                                var option = new Option(responseSection.title, responseSection.id, true, true);
+                                upSectionSelect.append(option).trigger('change');
+
+                                upSectionSelect.trigger({
+                                    type: 'select2:select',
+                                    params: {
+                                        data: responseSection
+                                    }
+                                });
+
+                            }
+
+                        } else {
+                            alert(response.message);
+                        }
+
+                    } catch (error) {
+                        console.log(error.message)
+
+                        alertShow('waring', `${error.message}`);
+                    }
+                }
+
 
             } else {
                 alert(response.message);
@@ -374,6 +392,76 @@
             alertShow('waring', `${error.message}`);
         }
     };
+
+    $('#cf-section').select2({
+        placeholder: 'Выберите',
+        language: {
+            noResults: function () {
+                return "Не найден";
+            }
+        },
+        ajax: {
+            transport: async function (params, success, failure) {
+                try {
+                    const query = params.data.q || '';
+                    const response = await fetch(`/api/sections?response_type=json&query=${encodeURIComponent(query)}`);
+
+                    const data = await response.json();
+                    const results = data.sections.map(i => ({
+                        id: i.id,
+                        text: `${i.title}`,
+                        value: i.id
+                    }));
+
+                    success({results});
+                } catch (error) {
+                    failure(error);
+                }
+            },
+            processResults: function (data) {
+                return data;
+            }
+        }
+    });
+
+    $('#clearSingleSelection').on('click', function () {
+        $('#cf-section').val(null).trigger('change');
+    });
+
+    $('#clearUpSection').on('click', function () {
+        $('#up-section').val(null).trigger('change');
+    });
+
+    $('#up-section').select2({
+        placeholder: 'Выберите',
+        language: {
+            noResults: function () {
+                return "Не найден";
+            }
+        },
+        ajax: {
+            transport: async function (params, success, failure) {
+                try {
+                    const query = params.data.q || '';
+                    const response = await fetch(`/api/sections?response_type=json&query=${encodeURIComponent(query)}`);
+
+                    const data = await response.json();
+                    const results = data.sections.map(i => ({
+                        id: i.id,
+                        text: `${i.title}`,
+                        value: i.id
+                    }));
+
+                    success({results});
+                } catch (error) {
+                    failure(error);
+                }
+            },
+            processResults: function (data) {
+                return data;
+            }
+        }
+    });
 
 </script>
 {% endblock %}
