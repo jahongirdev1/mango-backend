@@ -47,6 +47,14 @@ class Auth:
             await cache.delete(f'users:{user_id}')
         request.ctx.session['_delete'] = True
 
+        if settings['response_type'] in ['json'] or request.args.get('response_type') in ['json']:
+            return response.json(
+                body={
+                    'success': True
+                }
+            )
+        else:
+            return response.redirect('/api/')
 
     @classmethod
     async def select_user(cls, user_id):
