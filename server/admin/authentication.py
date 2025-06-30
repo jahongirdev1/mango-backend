@@ -74,6 +74,7 @@ class LoginAdminView(TemplateHTTPView):
             'url': '/api/',
             'token': token,
             'user_id': user['id'],
+            'branch_id': user['branch_id'],
         })
 
 
