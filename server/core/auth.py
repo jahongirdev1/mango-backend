@@ -153,7 +153,7 @@ class Auth:
         return request.ctx.session
 
     def handle_no_auth(self, request):
-        if settings['response_type'] in ['json']:
+        if settings['response_type'] in ['json'] or request.args.get('response_type') in ['json']:
             return response.json(
                 headers={
                     'X-authentication': 'expired_token'
