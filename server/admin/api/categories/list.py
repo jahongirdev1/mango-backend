@@ -30,7 +30,7 @@ class CategoriesView(BaseAPIView):
             SELECT id, title, photo, position
             FROM control.categories
             WHERE %s
-            ORDER BY id DESC
+            ORDER BY position
             ''' % cond,
             *cond_vars
         ))
