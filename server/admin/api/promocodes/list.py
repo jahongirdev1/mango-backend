@@ -59,9 +59,6 @@ class PromocodesView(BaseAPIView):
         if not code:
             return self.error(message='Отсуствует обязательный параметры "Код"')
 
-        if percent or percent < 0:
-            return self.error(message='Отсуствует обязательный параметры "Процент"')
-
         inserted_id = await db.fetchval(
             '''
             INSERT INTO control.promocodes (title, code, in_use, branch_id, percent, min_sum, max_sum, limit, description, discount_summ, is_disposable, is_free_delivery)
