@@ -27,7 +27,7 @@ class PromocodesView(BaseAPIView):
         cond, _ = set_counters(' AND '.join(cond))
         items = ListUtils.to_list_of_dicts(await db.fetch(
             '''
-            SELECT id, title, code, in_use, percent, created_at
+            SELECT *
             FROM control.promocodes
             WHERE %s
             ORDER BY id DESC
@@ -51,6 +51,7 @@ class PromocodesView(BaseAPIView):
         branch_id = IntUtils.to_int(request.json.get('branch_id'))
         description = StrUtils.to_str(request.json.get('description'))
         is_disposable = BoolUtils.to_bool(request.json.get('is_disposable'))
+        is_free_delivery = BoolUtils.to_bool(request.json.get('is_free_delivery'))
 
         if not title:
             return self.error(message='Отсуствует обязательный параметры "Имя"')
@@ -63,8 +64,8 @@ class PromocodesView(BaseAPIView):
 
         inserted_id = await db.fetchval(
             '''
-            INSERT INTO control.promocodes (title, code, in_use, branch_id, percent, min_sum, max_sum, limit, description, discount_summ, is_disposable)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+            INSERT INTO control.promocodes (title, code, in_use, branch_id, percent, min_sum, max_sum, limit, description, discount_summ, is_disposable, is_free_delivery)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
             RETURNING id
             ''',
             title,
@@ -77,7 +78,8 @@ class PromocodesView(BaseAPIView):
             limit,
             description,
             discount_summ,
-            is_disposable
+            is_disposable,
+            is_free_delivery
         )
 
         if not inserted_id:

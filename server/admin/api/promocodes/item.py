@@ -36,6 +36,7 @@ class PromocodeView(BaseAPIView):
         branch_id = IntUtils.to_int(request.json.get('branch_id'))
         description = StrUtils.to_str(request.json.get('description'))
         is_disposable = BoolUtils.to_bool(request.json.get('is_disposable'))
+        is_free_delivery = BoolUtils.to_bool(request.json.get('is_free_delivery'))
 
         if not title:
             return self.error(message='Отсуствует обязательный параметры "Имя"')
@@ -61,7 +62,8 @@ class PromocodeView(BaseAPIView):
                 limit = $9,
                 branch_id = $10,
                 description = $11,
-                is_disposable = $12
+                is_disposable = $12,
+                is_free_delivery = $13
             WHERE id = $1
             RETURNING *
             ''',
@@ -76,7 +78,8 @@ class PromocodeView(BaseAPIView):
             limit,
             branch_id,
             description,
-            is_disposable
+            is_disposable,
+            is_free_delivery
         )
 
         if not data:
