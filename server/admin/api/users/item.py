@@ -58,6 +58,7 @@ class UsersItemView(BaseAPIView):
             username = StrUtils.to_str(request.json.get('username'))
             photo = StrUtils.to_str(request.json.get('photo'))
             password = StrUtils.to_str(request.json.get('password'))
+            branch_id = IntUtils.to_int(request.json.get('branch_id'))
 
             if not first_name:
                 return self.error(message='Отсуствует обязательный параметры "Имя"')
@@ -76,7 +77,8 @@ class UsersItemView(BaseAPIView):
                         username = $5, 
                         photo = $6, 
                         birthday = $7,
-                        role_id = $8
+                        role_id = $8,
+                        branch_id = $9
                     WHERE id = $1
                     RETURNING *
                     ''',
@@ -87,7 +89,8 @@ class UsersItemView(BaseAPIView):
                     username,
                     photo,
                     birthday,
-                    role_id
+                    role_id,
+                    branch_id
                 )
             except asyncpg.exceptions.UniqueViolationError:
                 return self.error(
