@@ -2,6 +2,7 @@ from core.db import db
 from core.handlers import BaseAPIView
 from core.tools import set_counters
 from utils.bools import BoolUtils
+from utils.floats import FloatUtils
 from utils.ints import IntUtils
 from utils.lists import ListUtils
 from utils.strs import StrUtils
@@ -43,7 +44,13 @@ class PromocodesView(BaseAPIView):
         code = StrUtils.to_str(request.json.get('code'))
         in_use = BoolUtils.to_bool(request.json.get('in_use'))
         percent = IntUtils.to_int(request.json.get('percent'))
+        min_sum = FloatUtils.to_float(request.json.get('min_sum'))
+        max_sum = FloatUtils.to_float(request.json.get('max_sum'))
+        discount_summ = FloatUtils.to_float(request.json.get('summ'))
+        limit = IntUtils.to_int(request.json.get('limit'))
         branch_id = IntUtils.to_int(request.json.get('branch_id'))
+        description = StrUtils.to_str(request.json.get('description'))
+        is_disposable = BoolUtils.to_bool(request.json.get('is_disposable'))
 
         if not title:
             return self.error(message='Отсуствует обязательный параметры "Имя"')
@@ -51,20 +58,26 @@ class PromocodesView(BaseAPIView):
         if not code:
             return self.error(message='Отсуствует обязательный параметры "Код"')
 
-        if not percent or percent < 0:
+        if percent or percent < 0:
             return self.error(message='Отсуствует обязательный параметры "Процент"')
 
         inserted_id = await db.fetchval(
             '''
-            INSERT INTO control.promocodes (title, code, in_use, branch_id, percent)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO control.promocodes (title, code, in_use, branch_id, percent, min_sum, max_sum, limit, description, discount_summ, is_disposable)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
             RETURNING id
             ''',
             title,
             code,
             in_use,
             branch_id,
-            percent
+            percent,
+            min_sum,
+            max_sum,
+            limit,
+            description,
+            discount_summ,
+            is_disposable
         )
 
         if not inserted_id:
