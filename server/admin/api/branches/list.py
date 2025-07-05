@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from core.db import db
 from core.handlers import BaseAPIView
 from core.tools import set_counters
@@ -75,5 +77,21 @@ class BranchesView(BaseAPIView):
 
         if not inserted_id:
             return self.error(message='Операция не выполнена')
+
+        await db.executemany(
+            '''
+            INSERT INTO control.work_schedule (branch_id, day, started_at, stopped_at)
+            VALUES ($1, $2, $3, $4)
+            ''',
+            [
+                (
+                    inserted_id,
+                    index,
+                    datetime.strptime('00:00', '%H:%M').time(),
+                    datetime.strptime('23:59:59', '%H:%M:%S').time()
+                )
+                for index in range(1, 8)
+            ]
+        )
 
         return self.success(data={})
