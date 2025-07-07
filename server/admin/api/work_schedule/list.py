@@ -30,7 +30,7 @@ class WorkScheduleView(BaseAPIView):
             SELECT id, branch_id, day, started_at, stopped_at
             FROM control.work_schedule
             WHERE branch_id = $1
-            ORDER BY day DESC
+            ORDER BY day
             ''',
             branch_id
         )
