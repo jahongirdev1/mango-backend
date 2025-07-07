@@ -16,34 +16,44 @@ class GoodsView(BaseAPIView):
         if not branch_id:
             return self.error(message='Отсуствует обязательный параметры "Филиал"')
 
-        cond, cond_vars = ['is_active'], []
+        cond, cond_vars = ['g.is_active'], []
         section_id = IntUtils.to_int(request.args.get('section_id'))
         if section_id:
-            cond.append('section_id = {}')
+            cond.append('g.section_id = {}')
             cond_vars.append(section_id)
 
         if branch_id:
-            cond.append('branch_id = {}')
+            cond.append('g.branch_id = {}')
             cond_vars.append(branch_id)
 
         cond, _ = set_counters(' AND '.join(cond))
         items = ListUtils.to_list_of_dicts(await db.fetch(
             '''
             SELECT 
-                id, 
-                title, 
-                price, 
-                description, 
-                photo, 
-                whole, 
-                is_new, 
-                in_use, 
-                is_active, 
-                balance, 
-                created_at, 
-                increment_step,
-                discount_percent
-            FROM control.goods
+                g.id, 
+                g.title, 
+                g.price, 
+                g.description, 
+                g.photo, 
+                g.whole, 
+                g.is_new, 
+                g.in_use, 
+                g.is_active, 
+                g.balance, 
+                g.created_at, 
+                g.increment_step,
+                g.discount_percent,
+                (
+                    CASE WHEN s.id IS NOT NULL THEN JSONB_BUILD_OBJECT(
+                        'id', s.id,
+                        'title', s.title,
+                        'photo', s.photo,
+                        'position', s.position
+                    )
+                    END
+                ) AS section
+            FROM control.goods g
+            LEFT JOIN control.sections s ON s.id = g.section_id
             WHERE %s
             ORDER BY id DESC
             ''' % cond,
