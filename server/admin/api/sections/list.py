@@ -31,7 +31,7 @@ class SectionsView(BaseAPIView):
             SELECT id, title, photo, position, branch_id, parent_id
             FROM control.sections
             WHERE %s
-            ORDER BY id DESC
+            ORDER BY position
             ''' % cond,
             *cond_vars
         ))
