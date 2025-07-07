@@ -46,7 +46,7 @@ class WorkScheduleView(BaseAPIView):
             })
 
         return self.success(request=request, user=user, data={
-            'items': data
+            'work-schedule': data
         })
 
     async def post(self, request, user):
