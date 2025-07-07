@@ -59,11 +59,9 @@ class PromocodesView(BaseAPIView):
         if not code:
             return self.error(message='Отсуствует обязательный параметры "Код"')
 
-        print('limit', limit)
-
         inserted_id = await db.fetchval(
             '''
-            INSERT INTO control.promocodes (title, code, in_use, branch_id, percent, min_sum, max_sum, limit, description, discount_summ, is_disposable, is_free_delivery)
+            INSERT INTO control.promocodes (title, code, in_use, branch_id, percent, min_sum, max_sum, "limit", description, discount_summ, is_disposable, is_free_delivery)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
             RETURNING id
             ''',

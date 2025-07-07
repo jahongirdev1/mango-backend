@@ -59,7 +59,7 @@ class PromocodeView(BaseAPIView):
                 min_sum = $6,
                 max_sum = $7,
                 discount_summ = $8,
-                limit = $9,
+                "limit" = $9,
                 branch_id = $10,
                 description = $11,
                 is_disposable = $12,
