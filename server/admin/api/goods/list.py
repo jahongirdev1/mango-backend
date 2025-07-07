@@ -17,10 +17,12 @@ class GoodsView(BaseAPIView):
             return self.error(message='Отсуствует обязательный параметры "Филиал"')
 
         cond, cond_vars = ['g.is_active'], []
-        section_id = IntUtils.to_int(request.args.get('section_id'))
-        if section_id:
-            cond.append('g.section_id = {}')
-            cond_vars.append(section_id)
+        section_ids = StrUtils.to_str(request.args.get('section_ids'))
+        section_ids = section_ids and ListUtils.to_list_of_ints(section_ids.split(','))
+
+        if section_ids:
+            cond.append('g.section_id = ANY ({})')
+            cond_vars.append(section_ids)
 
         if branch_id:
             cond.append('g.branch_id = {}')
