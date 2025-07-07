@@ -29,7 +29,7 @@ class BranchesBridgeView(TemplateHTTPView):
             cond.append('b.category_ids && {}')
             cond_vars.append(category_ids)
 
-        cond, _ = set_counters(' AND '.join(cond), counter=2)
+        cond, _ = set_counters(' AND '.join(cond))
         items = ListUtils.to_list_of_dicts(await db.fetch(
             '''
             SELECT
@@ -69,7 +69,6 @@ class BranchesBridgeView(TemplateHTTPView):
             WHERE %s
             ORDER BY b.rating DESC
             ''' % cond,
-            now.isoweekday(),
             *cond_vars
         ))
 
