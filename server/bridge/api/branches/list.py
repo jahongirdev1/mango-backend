@@ -29,7 +29,10 @@ class BranchesBridgeView(TemplateHTTPView):
             cond.append('b.category_ids && {}')
             cond_vars.append(category_ids)
 
-        cond, _ = set_counters(' AND '.join(cond))
+        now_day = now.isoweekday()
+        work_schedule_days = [now_day, now_day < 7 and now_day + 1 or 1]
+
+        cond, _ = set_counters(' AND '.join(cond), counter=2)
         items = ListUtils.to_list_of_dicts(await db.fetch(
             '''
             SELECT
@@ -63,12 +66,14 @@ class BranchesBridgeView(TemplateHTTPView):
                         'stopped_at', w.stopped_at
                     ))
                     FROM control.work_schedule w
-                    WHERE w.branch_id = b.id
+                    WHERE w.branch_id = b.id AND day = ANY ($1)
+                    ORDER BY day
                 ) AS work_schedule
             FROM control.branches b
             WHERE %s
             ORDER BY b.rating DESC
             ''' % cond,
+            work_schedule_days,
             *cond_vars
         ))
 
