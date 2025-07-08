@@ -19,6 +19,11 @@ class GoodsView(BaseAPIView):
         cond, cond_vars = ['g.is_active'], []
         section_ids = StrUtils.to_str(request.args.get('section_ids'))
         section_ids = section_ids and ListUtils.to_list_of_ints(section_ids.split(','))
+        query = StrUtils.to_str(request.args.get('query'))
+
+        if query:
+            cond.append('g.title ILIKE {}')
+            cond_vars.append(f'%{query}%')
 
         if section_ids:
             cond.append('g.section_id = ANY ({})')
