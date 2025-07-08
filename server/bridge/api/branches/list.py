@@ -33,7 +33,7 @@ class BranchesBridgeView(TemplateHTTPView):
         work_schedule_days = [now_day, now_day < 7 and now_day + 1 or 1]
 
         cond, _ = set_counters(' AND '.join(cond), counter=2)
-        items = ListUtils.to_list_of_dicts(await db.fetch(
+        items = await db.fetch(
             '''
             SELECT
                 b.id,
@@ -62,6 +62,7 @@ class BranchesBridgeView(TemplateHTTPView):
                 ) AS categories,
                 (
                     SELECT JSON_AGG(JSONB_BUILD_OBJECT(
+                        'day', w.day,
                         'started_at', w.started_at,
                         'stopped_at', w.stopped_at
                     ))
@@ -74,10 +75,22 @@ class BranchesBridgeView(TemplateHTTPView):
             ''' % cond,
             work_schedule_days,
             *cond_vars
-        ))
+        )
+
+        branches = []
+        for item in items:
+            work_schedules = []
+            if item.get('work_schedule'):
+                work_schedules = sorted(item['work_schedule'], key=lambda x: x['day'])
+
+            branches.append({
+                **item,
+                'work_schedule': work_schedules
+            })
+
 
         return self.success(
             data={
-                'branches': items
+                'branches': branches
             }
         )
