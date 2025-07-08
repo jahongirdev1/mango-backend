@@ -30,7 +30,7 @@ class AdsView(BaseAPIView):
             SELECT id, title, photo, position, branch_id
             FROM control.ads
             WHERE %s
-            ORDER BY id DESC
+            ORDER BY position
             ''' % cond,
             *cond_vars
         ))
