@@ -31,6 +31,7 @@ class SectionsBridgeView(TemplateHTTPView):
             SELECT id, title, photo, parent_id
             FROM control.sections
             WHERE %s
+            ORDER BY position
             ''' % cond,
             *cond_vars
         ))

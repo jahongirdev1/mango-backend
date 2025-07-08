@@ -25,6 +25,7 @@ class AdsListView(TemplateHTTPView):
             SELECT id, title, photo, position
             FROM control.ads
             WHERE %s
+            ORDER BY position
             ''' % cond,
             *cond_vars
         ))

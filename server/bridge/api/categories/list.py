@@ -13,7 +13,8 @@ class CategoriesBridgeView(TemplateHTTPView):
             '''
             SELECT id, title, photo, position
             FROM control.categories
-            WHERE is_active 
+            WHERE is_active
+            ORDER BY position
             '''
         ))
         return self.success(
