@@ -66,8 +66,7 @@ class BranchesBridgeView(TemplateHTTPView):
                         'stopped_at', w.stopped_at
                     ))
                     FROM control.work_schedule w
-                    WHERE w.branch_id = b.id AND day = ANY ($1)
-                    ORDER BY day
+                    WHERE w.branch_id = b.id AND w.day = ANY ($1)
                 ) AS work_schedule
             FROM control.branches b
             WHERE %s
