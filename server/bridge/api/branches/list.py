@@ -20,6 +20,7 @@ class BranchesBridgeView(TemplateHTTPView):
         query = StrUtils.to_str(request.args.get('query'))
         category_ids = StrUtils.to_str(request.args.get('category_ids'))
         category_ids = category_ids and ListUtils.to_list_of_ints(category_ids.split(','))
+        branch_id = IntUtils.to_int(request.args.get('branch_id'))
 
         if query:
             cond.append('b.title ILIKE {}')
@@ -28,6 +29,10 @@ class BranchesBridgeView(TemplateHTTPView):
         if category_ids:
             cond.append('b.category_ids && {}')
             cond_vars.append(category_ids)
+
+        if branch_id:
+            cond.append('b.id = {}')
+            cond_vars.append(branch_id)
 
         now_day = now.isoweekday()
         work_schedule_days = [now_day, now_day < 7 and now_day + 1 or 1]
@@ -88,9 +93,16 @@ class BranchesBridgeView(TemplateHTTPView):
                 'work_schedule': work_schedules
             })
 
+        if branch_id:
+            return self.success(
+                data={
+                    'branch': branches[0] if branches else None
+                }
+            )
 
         return self.success(
             data={
                 'branches': branches
             }
         )
+
