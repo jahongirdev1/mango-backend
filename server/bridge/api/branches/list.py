@@ -3,6 +3,7 @@ from datetime import datetime
 from core.db import db
 from core.handlers import TemplateHTTPView
 from core.tools import set_counters
+from utils.ints import IntUtils
 from utils.lists import ListUtils
 
 __all__ = [
@@ -105,4 +106,3 @@ class BranchesBridgeView(TemplateHTTPView):
                 'branches': branches
             }
         )
-
