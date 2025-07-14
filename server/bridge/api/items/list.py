@@ -115,7 +115,9 @@ class ItemsBridgeView(TemplateHTTPView):
             )
             if promo_code:
                 is_free_delivery = promo_code['is_free_delivery']
-                after_sum = self.calc_discount(after_sum, promo_code)
+                success, after_sum, error = self.calc_discount(after_sum, promo_code)
+                if success is False:
+                    return self.error(message=error)
 
         return self.success(
             data={
