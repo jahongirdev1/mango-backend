@@ -1,7 +1,9 @@
+import math
 from typing import Optional
 
 from core.db import db
 from core.handlers import TemplateHTTPView
+from utils.floats import FloatUtils
 from utils.ints import IntUtils
 from utils.strs import StrUtils
 
@@ -11,6 +13,23 @@ __all__ = [
 
 
 class CalcBridgeView(TemplateHTTPView):
+
+    @classmethod
+    def haversine(cls, lat1, lon1, lat2, lon2):
+        R = 6371.0
+
+        phi1 = math.radians(lat1)
+        phi2 = math.radians(lat2)
+        delta_phi = math.radians(lat2 - lat1)
+        delta_lambda = math.radians(lon2 - lon1)
+
+        a = math.sin(delta_phi / 2) ** 2 + \
+            math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2) ** 2
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+        distance = R * c
+        return distance
+
     @classmethod
     def calc_discount(cls, summ: float, promo_code: dict) -> tuple[bool, float, Optional[str]]:
         value = summ
@@ -45,9 +64,38 @@ class CalcBridgeView(TemplateHTTPView):
     async def get(self, request):
         uid = StrUtils.to_str(request.args.get('uid'))
         promocode_id = IntUtils.to_int(request.args.get('promocode_id'))
+        branch_id = IntUtils.to_int(request.args.get('branch_id'))
+        latitude = FloatUtils.to_float(request.args.get('latitude'))
+        longitude = FloatUtils.to_float(request.args.get('longitude'))
 
         if not uid:
             return self.error(message='Отсуствует обязательный параметр "uid"')
+
+        if not branch_id:
+            return self.error(message='Отсуствует обязательный параметр "branch_id"')
+
+        if not latitude:
+            return self.error(message='Отсуствует обязательный параметр "latitude"')
+
+        if not longitude:
+            return self.error(message='Отсуствует обязательный параметр "longitude"')
+
+        delivery = 0
+
+        branch = await db.fetchrow(
+            '''
+            SELECT *
+            FROM control.branches
+            WHERE id = $1
+            ''',
+            branch_id
+        )
+        if not branch or branch['is_active'] is False:
+            return self.error(message='Операция не выполнена')
+
+        if branch['distance_cost'] and branch['latitude'] and branch['longitude']:
+            distance_km = self.haversine(branch['latitude'], branch['longitude'], latitude, longitude)
+            delivery = distance_km and distance_km * branch['distance_cost'] or 0
 
         items = await db.fetch(
             '''
@@ -101,7 +149,6 @@ class CalcBridgeView(TemplateHTTPView):
             })
 
         after_sum = before_sum
-        is_free_delivery = False
         if before_sum and promocode_id:
             promo_code = await db.fetchrow(
                 '''
@@ -112,7 +159,9 @@ class CalcBridgeView(TemplateHTTPView):
                 promocode_id
             )
             if promo_code:
-                is_free_delivery = promo_code['is_free_delivery']
+                if promo_code['is_free_delivery']:
+                    delivery = 0
+
                 success, after_sum, error = self.calc_discount(before_sum, promo_code)
                 if success is False:
                     return self.error(message=error)
@@ -121,6 +170,6 @@ class CalcBridgeView(TemplateHTTPView):
             data={
                 'total_summ': after_sum,
                 'before_sum': before_sum,
-                'is_free_delivery': is_free_delivery
+                'delivery': delivery
             }
         )

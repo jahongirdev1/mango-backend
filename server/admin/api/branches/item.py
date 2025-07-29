@@ -39,6 +39,7 @@ class BranchView(BaseAPIView):
         is_store = BoolUtils.to_bool(request.json.get('is_store'))
         category_ids = ListUtils.to_list_of_ints(request.json.get('category_ids'))
         min_delivery_sum = FloatUtils.to_float(request.json.get('min_delivery_sum'))
+        distance_cost = FloatUtils.to_float(request.json.get('distance_cost'))
 
         branch_id = IntUtils.to_int(branch_id)
         if not branch_id:
@@ -60,7 +61,8 @@ class BranchView(BaseAPIView):
                 min_order_sum = $11,
                 is_store = $12,
                 category_ids = $13,
-                min_delivery_sum = $14
+                min_delivery_sum = $14,
+                distance_cost = $15
             WHERE id = $1
             RETURNING *
             ''',
@@ -77,7 +79,8 @@ class BranchView(BaseAPIView):
             min_order_sum,
             is_store,
             category_ids,
-            min_delivery_sum
+            min_delivery_sum,
+            distance_cost
         )
 
         if not data:

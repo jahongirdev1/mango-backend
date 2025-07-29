@@ -24,7 +24,7 @@ class BranchesView(BaseAPIView):
         cond, _ = set_counters(' AND '.join(cond))
         items = ListUtils.to_list_of_dicts(await db.fetch(
             '''
-            SELECT id, title, photo, latitude, longitude, min_order_time, rating, promotion_text, phone, in_use, is_active, updated_at, created_at, category_ids, icon, max_order_time, min_order_sum, is_store, min_delivery_sum
+            SELECT id, title, photo, latitude, longitude, min_order_time, rating, promotion_text, phone, in_use, is_active, updated_at, created_at, category_ids, icon, max_order_time, min_order_sum, is_store, min_delivery_sum, distance_cost
             FROM control.branches
             WHERE %s
             ORDER BY id DESC
@@ -50,14 +50,15 @@ class BranchesView(BaseAPIView):
         is_store = BoolUtils.to_bool(request.json.get('is_store'))
         category_ids = ListUtils.to_list_of_ints(request.json.get('category_ids'))
         min_delivery_sum = FloatUtils.to_float(request.json.get('min_delivery_sum'))
+        distance_cost = FloatUtils.to_float(request.json.get('distance_cost'))
 
         if not title:
             return self.error(message='Отсуствует обязательный параметры "Имя"')
 
         inserted_id = await db.fetchval(
             '''
-            INSERT INTO control.branches (title, photo, latitude, longitude, min_order_time, promotion_text, phone, in_use, category_ids, max_order_time, min_order_sum, is_store, min_delivery_sum)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+            INSERT INTO control.branches (title, photo, latitude, longitude, min_order_time, promotion_text, phone, in_use, category_ids, max_order_time, min_order_sum, is_store, min_delivery_sum, distance_cost)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
             RETURNING id
             ''',
             title,
@@ -72,7 +73,8 @@ class BranchesView(BaseAPIView):
             max_order_time,
             min_order_sum,
             is_store,
-            min_delivery_sum
+            min_delivery_sum,
+            distance_cost
         )
 
         if not inserted_id:
