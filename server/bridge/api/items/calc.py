@@ -100,7 +100,7 @@ class CalcBridgeView(TemplateHTTPView):
                 'sum': summ
             })
 
-        after_sum = 0
+        after_sum = before_sum
         is_free_delivery = False
         if before_sum and promocode_id:
             promo_code = await db.fetchrow(
