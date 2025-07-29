@@ -1,5 +1,3 @@
-from typing import Optional
-
 from core.db import db
 from core.handlers import TemplateHTTPView
 from utils.floats import FloatUtils
@@ -13,41 +11,9 @@ __all__ = [
 
 
 class ItemsBridgeView(TemplateHTTPView):
-    @classmethod
-    def calc_discount(cls, summ: float, promo_code: dict) -> tuple[bool, float, Optional[str]]:
-        value = summ
-        if not promo_code:
-            return False, value, 'Промо-код не найден'
-
-        if promo_code['in_use'] is False or promo_code['is_active'] is False:
-            return False, value, 'Промо-код устарел'
-
-        if promo_code['min_sum']:
-            if value > promo_code['min_sum']:
-                pass
-            else:
-                return False, value, f"Сумма меньше {promo_code['min_sum']}"
-
-        if promo_code['max_sum']:
-            if value < promo_code['max_sum']:
-                pass
-            else:
-                return False, value, f"Сумма больше {promo_code['max_sum']}"
-
-        if promo_code['percent']:
-            value = value * (100 - promo_code['percent']) / 100
-
-        if promo_code['discount_summ']:
-            value = value - promo_code['discount_summ']
-
-        value = value and value > 0 and value or 0
-
-        return True, value, None
 
     async def get(self, request):
         uid = StrUtils.to_str(request.args.get('uid'))
-        promocode_id = IntUtils.to_int(request.args.get('promocode_id'))
-
         if not uid:
             return self.error(message='Отсуствует обязательный параметр "uid"')
 
@@ -75,7 +41,6 @@ class ItemsBridgeView(TemplateHTTPView):
         )
 
         data = []
-        before_sum = 0
         for item in items:
             good_price = item['good_price']
             if good_price:
@@ -83,7 +48,6 @@ class ItemsBridgeView(TemplateHTTPView):
                     good_price = good_price * (100 - item['good_discount_percent']) / 100
 
             summ = good_price and good_price * item['count'] or 0
-            before_sum += summ
 
             data.append({
                 'id': item['id'],
@@ -102,28 +66,8 @@ class ItemsBridgeView(TemplateHTTPView):
                 'sum': summ
             })
 
-        after_sum = 0
-        is_free_delivery = False
-        if before_sum and promocode_id:
-            promo_code = await db.fetchrow(
-                '''
-                SELECT is_active, in_use, percent, min_sum, max_sum, discount_summ, is_free_delivery
-                FROM control.promocodes
-                WHERE id = $1
-                ''',
-                promocode_id
-            )
-            if promo_code:
-                is_free_delivery = promo_code['is_free_delivery']
-                success, after_sum, error = self.calc_discount(before_sum, promo_code)
-                if success is False:
-                    return self.error(message=error)
-
         return self.success(
             data={
-                'total_summ': after_sum,
-                'before_sum': before_sum,
-                'is_free_delivery': is_free_delivery,
                 'items': data
             }
         )
