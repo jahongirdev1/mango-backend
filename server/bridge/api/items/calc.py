@@ -173,7 +173,7 @@ class CalcBridgeView(TemplateHTTPView):
             data={
                 'promo_discount': promo_discount,
                 'summary': summary,
-                'service': service_cost,
+                'service': ((summary - promo_discount) + delivery) * service_cost / 100,
                 'delivery': delivery,
                 'total': ((summary - promo_discount) + delivery) * (service_cost + 100) / 100
             }
