@@ -121,7 +121,7 @@ class CalcBridgeView(TemplateHTTPView):
         )
 
         data = []
-        before_sum = 0
+        summary = 0
         for item in items:
             good_price = item['good_price']
             if good_price:
@@ -129,7 +129,7 @@ class CalcBridgeView(TemplateHTTPView):
                     good_price = good_price * (100 - item['good_discount_percent']) / 100
 
             summ = good_price and good_price * item['count'] or 0
-            before_sum += summ
+            summary += summ
 
             data.append({
                 'id': item['id'],
@@ -148,8 +148,8 @@ class CalcBridgeView(TemplateHTTPView):
                 'sum': summ
             })
 
-        after_sum = before_sum
-        if before_sum and promocode_id:
+        promo_discount = 0
+        if summary and promocode_id:
             promo_code = await db.fetchrow(
                 '''
                 SELECT is_active, in_use, percent, min_sum, max_sum, discount_summ, is_free_delivery
@@ -162,14 +162,19 @@ class CalcBridgeView(TemplateHTTPView):
                 if promo_code['is_free_delivery']:
                     delivery = 0
 
-                success, after_sum, error = self.calc_discount(before_sum, promo_code)
+                success, after_sum, error = self.calc_discount(summary, promo_code)
                 if success is False:
                     return self.error(message=error)
 
+                promo_discount = summary > after_sum and summary - after_sum or summary
+
+        service_cost = 10
         return self.success(
             data={
-                'total_summ': after_sum,
-                'before_sum': before_sum,
-                'delivery': delivery
+                'promo_discount': promo_discount,
+                'summary': summary,
+                'service': service_cost,
+                'delivery': delivery,
+                'total': ((summary - promo_discount) + delivery) * (service_cost + 100) / 100
             }
         )
