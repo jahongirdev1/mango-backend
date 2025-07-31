@@ -93,9 +93,9 @@ class CalcBridgeView(TemplateHTTPView):
         if not branch or branch['is_active'] is False:
             return self.error(message='Операция не выполнена')
 
-        if branch['distance_cost'] and branch['latitude'] and branch['longitude']:
+        if branch['min_delivery_sum'] and branch['latitude'] and branch['longitude']:
             distance_km = self.haversine(branch['latitude'], branch['longitude'], latitude, longitude)
-            delivery = distance_km and distance_km * branch['distance_cost'] or 0
+            delivery = distance_km and distance_km * branch['min_delivery_sum'] or 0
 
         items = await db.fetch(
             '''
