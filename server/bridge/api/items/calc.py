@@ -149,6 +149,7 @@ class CalcBridgeView(TemplateHTTPView):
             })
 
         promo_discount = 0
+        error = str()
         if summary and promocode_id:
             promo_code = await db.fetchrow(
                 '''
@@ -163,10 +164,8 @@ class CalcBridgeView(TemplateHTTPView):
                     delivery = 0
 
                 success, after_sum, error = self.calc_discount(summary, promo_code)
-                if success is False:
-                    return self.error(message=error)
-
-                promo_discount = summary > after_sum and summary - after_sum or summary
+                if success is True:
+                    promo_discount = summary > after_sum and summary - after_sum or summary
 
         service_cost = 10
         return self.success(
@@ -175,6 +174,7 @@ class CalcBridgeView(TemplateHTTPView):
                 'summary': summary,
                 'service': ((summary - promo_discount) + delivery) * service_cost / 100,
                 'delivery': delivery,
-                'total': ((summary - promo_discount) + delivery) * (service_cost + 100) / 100
+                'total': ((summary - promo_discount) + delivery) * (service_cost + 100) / 100,
+                'error': error
             }
         )
