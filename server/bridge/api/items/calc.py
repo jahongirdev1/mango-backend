@@ -1,6 +1,9 @@
 import math
 from typing import Optional
 
+import ujson
+
+from core.cache import cache
 from core.db import db
 from core.handlers import TemplateHTTPView
 from utils.floats import FloatUtils
@@ -168,13 +171,27 @@ class CalcBridgeView(TemplateHTTPView):
                     promo_discount = summary > after_sum and summary - after_sum or summary
 
         service_cost = 10
+        service = ((summary - promo_discount) + delivery) * service_cost / 100
+        total = ((summary - promo_discount) + delivery) * (service_cost + 100) / 100
+        await cache.set(f'order:calc:{uid}', ujson.dumps({
+            'promocode_id': promocode_id,
+            'branch_id': branch_id,
+            'latitude': latitude,
+            'longitude': longitude,
+            'total': total,
+            'delivery': delivery,
+            'service': service,
+            'summary': summary,
+            'promo_discount': promo_discount,
+            'error': error,
+        }))
         return self.success(
             data={
                 'promo_discount': promo_discount,
                 'summary': summary,
-                'service': ((summary - promo_discount) + delivery) * service_cost / 100,
+                'service': service,
                 'delivery': delivery,
-                'total': ((summary - promo_discount) + delivery) * (service_cost + 100) / 100,
+                'total': total,
                 'error': error
             }
         )

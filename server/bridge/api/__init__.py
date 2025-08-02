@@ -8,6 +8,7 @@ from bridge.api.clients.otp import OtpClientBridgeView
 from bridge.api.goods.list import GoodsBridgeView
 from bridge.api.items.calc import CalcBridgeView
 from bridge.api.items.list import ItemsBridgeView
+from bridge.api.orders.list import OrdersBridgeView
 from bridge.api.promocodes.item import PromocodeBridgeView
 from bridge.api.sections.list import SectionsBridgeView
 from bridge.api.validations.phone import PhoneValidationsBridgeView
@@ -29,6 +30,7 @@ _api_bp.add_route(CalcBridgeView.as_view(), '/calc/')
 _api_bp.add_route(OtpClientBridgeView.as_view(), '/client/otp/<action>/')
 _api_bp.add_route(PhoneValidationsBridgeView.as_view(), '/validations/phone/')
 _api_bp.add_route(WordsBridgeView.as_view(), '/words/')
+_api_bp.add_route(OrdersBridgeView.as_view(), '/orders/<client_id>/')
 
 bridge_bp = Blueprint.group(
     _api_bp,
