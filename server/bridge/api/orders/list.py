@@ -65,7 +65,7 @@ class OrdersBridgeView(TemplateHTTPView):
         data['status'] = 'CREATED'
         data['is_active'] = True
 
-        order = await mongo.orders.insert(data)
+        order = await mongo.orders.insert_one(data)
 
         if not order.inserted_id:
             return self.error(message='Операция не выполнена')
