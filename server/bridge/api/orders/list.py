@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import ujson
+from pymongo import ReturnDocument
 
 from core.cache import cache
 from core.db import db, mongo
@@ -56,14 +57,21 @@ class OrdersBridgeView(TemplateHTTPView):
             return self.error(message='Операция не выполнена')
 
         data = ujson.loads(data)
-        type_pay = StrUtils.to_str(request.json.get('type_pay'), default='CACHE')
 
-        data['type_pay'] = type_pay
+        counter = await mongo.counters.find_one_and_update(
+            filter={'collection': 'orders'},
+            update={'$inc': {'seq': 1}},
+            upsert=True,
+            return_document=ReturnDocument.AFTER
+        )
+
+        data['type_pay'] = StrUtils.to_str(request.json.get('type_pay'), default='CACHE')
         data['client_id'] = client_id
         data['uid'] = uid
         data['created_at'] = datetime.now()
         data['status'] = 'CREATED'
         data['is_active'] = True
+        data['id'] = counter['seq']
 
         order = await mongo.orders.insert_one(data)
 
