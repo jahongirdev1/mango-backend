@@ -3,11 +3,13 @@ import traceback
 import firebase_admin
 from firebase_admin import credentials, messaging
 
+from settings import settings
+
 
 class Firebase:
     @classmethod
     def initialize(cls):
-        cred = credentials.Certificate("path/to/serviceAccountKey.json")
+        cred = credentials.Certificate(settings.get('file_path', '') + '/static/firebase_config.json')
         firebase_admin.initialize_app(cred)
 
     @classmethod
