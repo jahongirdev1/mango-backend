@@ -138,6 +138,26 @@ class UsersItemView(BaseAPIView):
                 'user': dict(employee)
             })
 
+        elif action == 'refresh_firebase_token':
+            firebase_token = StrUtils.to_str(request.json.get('firebase_token'))
+            if not firebase_token:
+                return self.error(message='Отсуствует обязательный параметр "firebase_token"')
+
+            updated_id = await db.fetchval(
+                '''
+                UPDATE public.users
+                SET firebase_token = $2
+                WHERE id = $1
+                ''',
+                user_id,
+                firebase_token
+            )
+
+            if not updated_id:
+                return self.error(message='Операция не выполнена')
+
+            return self.success()
+
         return self.error()
 
     async def delete(self, request, user, user_id):

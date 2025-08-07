@@ -1,5 +1,6 @@
 from core.db import db
 from core.handlers import BaseAPIView
+from core.pager import Pager
 from core.tools import set_counters
 from utils.bools import BoolUtils
 from utils.floats import FloatUtils
@@ -33,6 +34,10 @@ class GoodsView(BaseAPIView):
             cond.append('g.branch_id = {}')
             cond_vars.append(branch_id)
 
+        pager = Pager()
+        pager.set_page(request.args.get('page', 1))
+        pager.set_limit(request.args.get('limit', 50))
+
         cond, _ = set_counters(' AND '.join(cond))
         items = ListUtils.to_list_of_dicts(await db.fetch(
             '''
@@ -63,12 +68,23 @@ class GoodsView(BaseAPIView):
             LEFT JOIN control.sections s ON s.id = g.section_id
             WHERE %s
             ORDER BY id DESC
-            ''' % cond,
+            %s
+            ''' % (cond, pager.as_query()),
             *cond_vars
         ))
 
+        total = await db.fetchval(
+            '''
+            SELECT COUNT(*)
+            FROM control.goods g
+            WHERE %s
+            ''' % cond,
+            *cond_vars
+        ) or 0
+
         return self.success(request=request, user=user, data={
-            'goods': items
+            'goods': items,
+            'total': total
         })
 
     async def post(self, request, user):

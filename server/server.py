@@ -10,6 +10,7 @@ from bridge.api import bridge_bp
 from core.auth import auth
 from core.cache import cache
 from core.db import mongo, db
+from core.firebase import Firebase
 from core.session import session
 from exceptions import ExceptionsView
 from settings import settings
@@ -42,6 +43,7 @@ async def initialize_modules(_app, _loop):
     await cache.initialize(_loop, maxsize=5)
     session.initialize(_app)
     auth.initialize(_app)
+    Firebase.initialize()
 
 
 app.blueprint([
