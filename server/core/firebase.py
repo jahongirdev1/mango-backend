@@ -1,7 +1,6 @@
 import traceback
 
 import firebase_admin
-import ujson
 from firebase_admin import credentials, messaging
 
 from settings import settings
@@ -21,6 +20,6 @@ class Firebase:
                 data=data
             )
             print(f'Firebase#send_message() -> token: {token}, data: {data}')
-            print(messaging.send(message))
+            messaging.send(message)
         except (Exception,):
             traceback.print_exc()
