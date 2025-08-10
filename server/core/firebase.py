@@ -18,7 +18,7 @@ class Firebase:
         try:
             message = messaging.Message(
                 token=token,
-                data=ujson.dumps(data)
+                data=data
             )
             print(f'Firebase#send_message() -> token: {token}, data: {data}')
             print(messaging.send(message))
