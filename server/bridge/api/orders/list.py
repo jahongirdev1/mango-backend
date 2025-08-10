@@ -100,7 +100,7 @@ class OrdersBridgeView(TemplateHTTPView):
         )
         await cache.delete(f'order:calc:{uid}')
 
-        return self.success()
+        return self.success(data={'order_id': order.inserted_id})
 
     async def delete(self, request, client_id):
         client_id = IntUtils.to_int(client_id)
