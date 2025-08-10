@@ -176,22 +176,22 @@ class CalcBridgeView(TemplateHTTPView):
         await cache.set(f'order:calc:{uid}', ujson.dumps({
             'goods': goods,
             'promocode_id': promocode_id,
-            'branch_id': branch_id,
-            'latitude': latitude,
-            'longitude': longitude,
             'total': total,
             'delivery': delivery,
             'service': service,
             'summary': summary,
             'promo_discount': promo_discount,
             'error': error,
+            'branch_id': branch_id,
             'branch_title': branch['title'],
             'branch_latitude': branch['latitude'],
             'branch_longitude': branch['longitude'],
             'branch_min_order_time': branch['min_order_time'],
             'branch_max_order_time': branch['max_order_time'],
             'branch_location_name': branch['location_name'],
-            'client_location_name': client_location_name
+            'client_location_name': client_location_name,
+            'client_latitude': latitude,
+            'client_longitude': longitude,
         }))
 
         return self.success(
