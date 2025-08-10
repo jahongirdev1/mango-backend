@@ -13,10 +13,11 @@ class Firebase:
         firebase_admin.initialize_app(cred)
 
     @classmethod
-    def send_message(cls, token: str, data: dict):
+    def send_message(cls, token: str, notification: dict = None, data: dict = None):
         try:
             message = messaging.Message(
                 token=token,
+                notification=notification and messaging.Notification(**notification) or None,
                 data=data
             )
             print(f'Firebase#send_message() -> token: {token}, data: {data}')

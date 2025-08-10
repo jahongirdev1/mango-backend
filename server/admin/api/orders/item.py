@@ -1,14 +1,36 @@
 from bson import ObjectId
 from pymongo import ReturnDocument
 
+from core.datetimes import DatetimeUtils
 from core.db import mongo, db
 from core.firebase import Firebase
 from core.handlers import BaseAPIView
-from utils.ints import IntUtils
 from utils.strs import StrUtils
 
 
 class OrderView(BaseAPIView):
+    STATUS_TEXT = {
+        'CREATED': {
+            'title': 'Заказ создан',
+            'body': 'Мы приняли ваш заказ и скоро начнём готовить к отправке.'
+        },
+        'CANCELED': {
+            'title': 'Заказ отменён',
+            'body': 'К сожалению, ваш заказ был отменён. Если это ошибка, свяжитесь с нами.'
+        },
+        'IN_PROGRESS': {
+            'title': 'Заказ в обработке',
+            'body': 'Мы готовим ваш заказ к отправке.'
+        },
+        'ON_ROAD': {
+            'title': 'Заказ в пути',
+            'body': 'Курьер уже в дороге. Скоро доставим!'
+        },
+        'FINISH': {
+            'title': 'Заказ доставлен',
+            'body': 'Спасибо, что выбрали нас! Приятного аппетита.'
+        }
+    }
 
     async def get(self, request, user, order_id):
         order_id = StrUtils.to_str(order_id)
@@ -51,19 +73,22 @@ class OrderView(BaseAPIView):
             )
 
             if token:
-                Firebase.send_message(token, {
-                    'action': 'change_status',
-                    'order_id': order_id,
-                })
+                Firebase.send_message(
+                    token=token,
+                    notification=status in self.STATUS_TEXT and self.STATUS_TEXT[status] or None,
+                    data={
+                        'action': 'change_status',
+                        'order_id': order_id,
+                    })
 
             return self.success()
 
         if action == 'order_time':
-            max_order_time = IntUtils.to_int(request.json.get('max_order_time'))
+            max_order_time = DatetimeUtils.to_datetime(request.json.get('max_order_time'))
             if not max_order_time:
                 return self.error(message='Отсуствует обязательный параметры "max_order_time"')
 
-            min_order_sum = IntUtils.to_int(request.json.get('min_order_sum'))
+            min_order_sum = DatetimeUtils.to_datetime(request.json.get('min_order_sum'))
             if not min_order_sum:
                 return self.error(message='Отсуствует обязательный параметры "min_order_sum"')
 
