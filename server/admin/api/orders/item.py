@@ -28,12 +28,12 @@ class OrderView(BaseAPIView):
         if not order_id or not ObjectId.is_valid(order_id):
             return self.error(message='Отсуствует обязательный параметры "Номер заказа"')
 
-        status = StrUtils.to_str(request.json.get('status'))
-        if not status:
-            return self.error(message='Отсуствует обязательный параметры "Статус"')
-
         action = StrUtils.to_str(request.json.get('action'))
         if action == 'change_status':
+            status = StrUtils.to_str(request.json.get('status'))
+            if not status:
+                return self.error(message='Отсуствует обязательный параметры "Статус"')
+
             order = await mongo.orders.find_one_and_update({'_id': ObjectId(order_id)}, {'$set': {
                 'status': status
             }}, return_document=ReturnDocument.AFTER)
