@@ -93,7 +93,8 @@ class UsersItemView(BaseAPIView):
                     photo,
                     birthday,
                     role_id,
-                    branch_id
+                    branch_id,
+                    phone
                 )
             except asyncpg.exceptions.UniqueViolationError:
                 return self.error(
