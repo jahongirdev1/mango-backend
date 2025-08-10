@@ -70,6 +70,7 @@ class CalcBridgeView(TemplateHTTPView):
         branch_id = IntUtils.to_int(request.args.get('branch_id'))
         latitude = FloatUtils.to_float(request.args.get('latitude'))
         longitude = FloatUtils.to_float(request.args.get('longitude'))
+        client_location_name = StrUtils.to_str(request.args.get('client_location_name'))
 
         if not uid:
             return self.error(message='Отсуствует обязательный параметр "uid"')
@@ -123,7 +124,7 @@ class CalcBridgeView(TemplateHTTPView):
             uid
         )
 
-        data = []
+        goods = []
         summary = 0
         for item in items:
             good_price = item['good_price']
@@ -134,11 +135,9 @@ class CalcBridgeView(TemplateHTTPView):
             summ = good_price and good_price * item['count'] or 0
             summary += summ
 
-            data.append({
-                'id': item['id'],
+            goods.append({
                 'good_id': item['good_id'],
                 'count': item['count'],
-                'uid': item['uid'],
                 'good_title': item['good_title'],
                 'good_description': item['good_description'],
                 'good_discount_percent': item['good_discount_percent'],
@@ -173,7 +172,9 @@ class CalcBridgeView(TemplateHTTPView):
         service_cost = 10
         service = ((summary - promo_discount) + delivery) * service_cost / 100
         total = ((summary - promo_discount) + delivery) * (service_cost + 100) / 100
+
         await cache.set(f'order:calc:{uid}', ujson.dumps({
+            'goods': goods,
             'promocode_id': promocode_id,
             'branch_id': branch_id,
             'latitude': latitude,
@@ -184,7 +185,15 @@ class CalcBridgeView(TemplateHTTPView):
             'summary': summary,
             'promo_discount': promo_discount,
             'error': error,
+            'branch_title': branch['title'],
+            'branch_latitude': branch['latitude'],
+            'branch_longitude': branch['longitude'],
+            'branch_min_order_time': branch['min_order_time'],
+            'branch_max_order_time': branch['max_order_time'],
+            'branch_location_name': branch['location_name'],
+            'client_location_name': client_location_name
         }))
+
         return self.success(
             data={
                 'promo_discount': promo_discount,
