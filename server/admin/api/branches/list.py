@@ -24,7 +24,28 @@ class BranchesView(BaseAPIView):
         cond, _ = set_counters(' AND '.join(cond))
         items = ListUtils.to_list_of_dicts(await db.fetch(
             '''
-            SELECT id, title, photo, latitude, longitude, min_order_time, rating, promotion_text, phone, in_use, is_active, updated_at, created_at, category_ids, icon, max_order_time, min_order_sum, is_store, min_delivery_sum, distance_cost
+            SELECT 
+                id, 
+                title, 
+                photo, 
+                latitude, 
+                longitude, 
+                min_order_time, 
+                rating, 
+                promotion_text, 
+                phone, 
+                in_use, 
+                is_active, 
+                updated_at, 
+                created_at, 
+                category_ids, 
+                icon, 
+                max_order_time, 
+                min_order_sum, 
+                is_store, 
+                min_delivery_sum, 
+                distance_cost,
+                location_name
             FROM control.branches
             WHERE %s
             ORDER BY id DESC
@@ -41,6 +62,7 @@ class BranchesView(BaseAPIView):
         photo = StrUtils.to_str(request.json.get('photo'))
         phone = StrUtils.to_str(request.json.get('phone'))
         promotion_text = StrUtils.to_str(request.json.get('promotion_text'))
+        location_name = StrUtils.to_str(request.json.get('location_name'))
         latitude = FloatUtils.to_float(request.json.get('latitude'))
         longitude = FloatUtils.to_float(request.json.get('longitude'))
         min_order_time = IntUtils.to_int(request.json.get('min_order_time'))
@@ -57,7 +79,9 @@ class BranchesView(BaseAPIView):
 
         inserted_id = await db.fetchval(
             '''
-            INSERT INTO control.branches (title, photo, latitude, longitude, min_order_time, promotion_text, phone, in_use, category_ids, max_order_time, min_order_sum, is_store, min_delivery_sum, distance_cost)
+            INSERT INTO control.branches 
+            (title, photo, latitude, longitude, min_order_time, promotion_text, phone, in_use, category_ids, 
+            max_order_time, min_order_sum, is_store, min_delivery_sum, distance_cost, location_name)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
             RETURNING id
             ''',
@@ -74,7 +98,8 @@ class BranchesView(BaseAPIView):
             min_order_sum,
             is_store,
             min_delivery_sum,
-            distance_cost
+            distance_cost,
+            location_name
         )
 
         if not inserted_id:
