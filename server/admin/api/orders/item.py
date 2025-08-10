@@ -43,7 +43,7 @@ class OrderView(BaseAPIView):
 
             token = await db.fetchval(
                 '''
-                SELECT *
+                SELECT firebase_token
                 FROM control.clients
                 WHERE id = $1
                 ''',
