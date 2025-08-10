@@ -10,6 +10,7 @@ from core.pager import Pager
 from core.tools import set_counters
 from utils.ints import IntUtils
 from utils.lists import ListUtils
+from utils.phones import PhoneNumberUtils
 from utils.strs import StrUtils
 
 
@@ -80,6 +81,7 @@ class UsersListView(BaseAPIView):
         role_id = IntUtils.to_int(request.json.get('role_id'))
         photo = StrUtils.to_str(request.json.get('photo'))
         branch_id = IntUtils.to_int(user['branch_id'] or request.json.get('branch_id'))
+        phone = PhoneNumberUtils.normalize(request.json.get('phone'))
 
         if not first_name:
             return self.error(message='Отсуствует обязательный параметры "Имя"')
@@ -94,8 +96,8 @@ class UsersListView(BaseAPIView):
             user = await db.fetchrow(
                 '''
                 INSERT INTO public.users
-                (last_name, first_name, middle_name, password, username, photo, birthday, role_id, branch_id)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                (last_name, first_name, middle_name, password, username, photo, birthday, role_id, branch_id, phone)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
                 RETURNING *
                 ''',
                 last_name,
@@ -106,7 +108,8 @@ class UsersListView(BaseAPIView):
                 photo,
                 birthday,
                 role_id,
-                branch_id
+                branch_id,
+                phone
             )
 
         except asyncpg.exceptions.UniqueViolationError:

@@ -7,6 +7,7 @@ from core.handlers import BaseAPIView
 from core.hasher import password_to_hash
 from utils.ints import IntUtils
 from utils.lists import ListUtils
+from utils.phones import PhoneNumberUtils
 from utils.strs import StrUtils
 
 
@@ -59,6 +60,7 @@ class UsersItemView(BaseAPIView):
             photo = StrUtils.to_str(request.json.get('photo'))
             password = StrUtils.to_str(request.json.get('password'))
             branch_id = IntUtils.to_int(request.json.get('branch_id'))
+            phone = PhoneNumberUtils.normalize(request.json.get('phone'))
 
             if not first_name:
                 return self.error(message='Отсуствует обязательный параметры "Имя"')
@@ -78,7 +80,8 @@ class UsersItemView(BaseAPIView):
                         photo = $6, 
                         birthday = $7,
                         role_id = $8,
-                        branch_id = $9
+                        branch_id = $9,
+                        phone = $10
                     WHERE id = $1
                     RETURNING *
                     ''',
