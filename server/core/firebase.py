@@ -1,6 +1,7 @@
 import traceback
 
 import firebase_admin
+import ujson
 from firebase_admin import credentials, messaging
 
 from settings import settings
@@ -17,7 +18,7 @@ class Firebase:
         try:
             message = messaging.Message(
                 token=token,
-                data=data
+                data=ujson.dumps(data)
             )
             print(f'Firebase#send_message() -> token: {token}, data: {data}')
             print(messaging.send(message))
