@@ -31,8 +31,29 @@ class ClientBridgeView(TemplateHTTPView):
         )
 
         if client and client['uid'] == uid:
+            client = dict(client)
+
+            client['has_admin'] = await db.fetchval(
+                '''
+                SELECT id
+                FROM public.users
+                WHERE phone = $1
+                ''',
+                phone
+            ) and True or False
+
+            await db.execute(
+                '''
+                UPDATE control.clients
+                SET has_admin = $2
+                WHERE id = $1
+                ''',
+                client['id'],
+                client['has_admin']
+            )
+
             return self.success(data={
-                'client': dict(client)
+                'client': client
             })
 
         return self.error(message='Клиент не найден', status=401)
