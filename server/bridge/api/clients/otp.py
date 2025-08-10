@@ -47,15 +47,25 @@ class OtpClientBridgeView(TemplateHTTPView):
             if item:
                 item = ujson.loads(item)
                 if item['otp'] == otp:
+                    has_admin = await db.fetchval(
+                        '''
+                        SELECT id
+                        FROM public.users
+                        WHERE phone = $1
+                        ''',
+                        phone
+                    ) and True or False
+
                     client = await db.fetchrow(
                         '''
-                        INSERT INTO control.clients (uid, phone)
-                        VALUES ($1, $2)
-                        ON CONFLICT (phone) DO UPDATE SET uid = excluded.uid
-                        RETURNING id, last_name, first_name, photo, uid, phone
+                        INSERT INTO control.clients (uid, phone, has_admin)
+                        VALUES ($1, $2, $3)
+                        ON CONFLICT (phone) DO UPDATE SET uid = excluded.uid, has_admin = excluded.has_admin
+                        RETURNING id, last_name, first_name, photo, uid, phone, has_admin
                         ''',
                         item['uid'],
                         phone,
+                        has_admin
                     ) or {}
 
                     return self.success(data={'client': dict(client)})

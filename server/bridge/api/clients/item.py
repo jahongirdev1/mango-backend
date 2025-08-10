@@ -23,7 +23,7 @@ class ClientBridgeView(TemplateHTTPView):
 
         client = await db.fetchrow(
             '''
-            SELECT id, first_name, last_name, photo, uid, phone
+            SELECT id, first_name, last_name, photo, uid, phone, has_admin
             FROM control.clients
             WHERE phone = $1
             ''',
