@@ -59,6 +59,7 @@ class BranchesBridgeView(TemplateHTTPView):
                 b.is_store,
                 b.min_delivery_sum,
                 b.distance_cost,
+                b.location_name,
                 (
                     SELECT JSON_AGG(JSONB_BUILD_OBJECT(
                         'id', c.id,
