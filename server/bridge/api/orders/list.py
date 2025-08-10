@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import ujson
 from pymongo import ReturnDocument
@@ -65,10 +65,22 @@ class OrdersBridgeView(TemplateHTTPView):
             return_document=ReturnDocument.AFTER
         )
 
+        now = datetime.now()
+
+        branch_min_order_time = None
+        if data.get('branch_min_order_time'):
+            branch_min_order_time = now + timedelta(minutes=data['branch_min_order_time'])
+
+        branch_max_order_time = None
+        if data.get('branch_max_order_time'):
+            branch_max_order_time = now + timedelta(minutes=data['branch_max_order_time'])
+
         data['type_pay'] = StrUtils.to_str(request.json.get('type_pay'), default='CACHE')
         data['client_id'] = client_id
         data['uid'] = uid
-        data['created_at'] = datetime.now()
+        data['created_at'] = now
+        data['branch_min_order_time'] = branch_min_order_time
+        data['branch_max_order_time'] = branch_max_order_time
         data['status'] = 'CREATED'
         data['is_active'] = True
         data['id'] = counter['seq']
