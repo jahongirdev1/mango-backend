@@ -19,6 +19,7 @@ class Firebase:
                 token=token,
                 data=data
             )
-            messaging.send(message)
+            print(f'Firebase#send_message() -> token: {token}, data: {data}')
+            print(messaging.send(message))
         except (Exception,):
             traceback.print_exc()

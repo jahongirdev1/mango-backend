@@ -51,6 +51,7 @@ class OrderView(BaseAPIView):
             )
 
             if token:
+                print('->>>>')
                 Firebase.send_message(token, {
                     'action': 'change_status'
                 })
