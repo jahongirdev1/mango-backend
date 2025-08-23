@@ -87,19 +87,17 @@ class OrderView(BaseAPIView):
 
             return self.success()
 
-        if action == 'order_time':
-            max_order_time = DatetimeUtils.to_datetime(request.json.get('max_order_time'))
-            if not max_order_time:
-                return self.error(message='Отсуствует обязательный параметры "max_order_time"')
-
-            min_order_sum = DatetimeUtils.to_datetime(request.json.get('min_order_sum'))
-            if not min_order_sum:
-                return self.error(message='Отсуствует обязательный параметры "min_order_sum"')
+        if action == 'change_delivery_time':
+            delivery_time = DatetimeUtils.to_datetime(request.json.get('delivery_time'))
+            if not delivery_time:
+                return self.error(message='Отсуствует обязательный параметры "delivery_time"')
 
             await mongo.orders.update_one({'_id': ObjectId(order_id)}, {'$set': {
-                'max_order_time': max_order_time,
-                'min_order_sum': min_order_sum
+                'delivery_time': delivery_time,
             }})
             return self.success()
+
+        if action == 'change_text':
+            pass
 
         return self.error(message='Операция не выполнена')

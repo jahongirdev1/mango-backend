@@ -67,21 +67,16 @@ class OrdersBridgeView(TemplateHTTPView):
 
         now = datetime.now()
 
-        branch_min_order_time = None
-        if data.get('branch_min_order_time'):
-            branch_min_order_time = now + timedelta(minutes=data['branch_min_order_time'])
-
-        branch_max_order_time = None
+        delivery_time = None
         if data.get('branch_max_order_time'):
-            branch_max_order_time = now + timedelta(minutes=data['branch_max_order_time'])
+            delivery_time = now + timedelta(minutes=data['branch_max_order_time'])
 
         data['type_pay'] = StrUtils.to_str(request.json.get('type_pay'), default='CACHE')
         data['type_order'] = StrUtils.to_str(request.json.get('type_order'), default='DELIVERY')
         data['client_id'] = client_id
         data['uid'] = uid
         data['created_at'] = now
-        data['branch_min_order_time'] = branch_min_order_time
-        data['branch_max_order_time'] = branch_max_order_time
+        data['delivery_time'] = delivery_time
         data['status'] = 'CREATED'
         data['is_active'] = True
         data['id'] = counter['seq']
