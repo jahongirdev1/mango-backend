@@ -76,6 +76,7 @@ class OrdersBridgeView(TemplateHTTPView):
             branch_max_order_time = now + timedelta(minutes=data['branch_max_order_time'])
 
         data['type_pay'] = StrUtils.to_str(request.json.get('type_pay'), default='CACHE')
+        data['type_order'] = StrUtils.to_str(request.json.get('type_order'), default='DELIVERY')
         data['client_id'] = client_id
         data['uid'] = uid
         data['created_at'] = now

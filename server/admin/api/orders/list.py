@@ -9,15 +9,17 @@ class OrdersView(BaseAPIView):
 
     async def get(self, request, user):
         branch_id = user['branch_id']
-        if not branch_id:
-            return self.error(message='Отсуствует обязательный параметры "Филиал"')
 
         filters = {
             'is_active': True
         }
+
         status = StrUtils.to_str(request.args.get('status'))
         if status:
             filters['status'] = status
+
+        if branch_id:
+            filters['branch_id'] = branch_id
 
         limit = request.args.get('limit', 100)
 
