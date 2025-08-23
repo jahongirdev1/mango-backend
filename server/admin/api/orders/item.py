@@ -61,7 +61,8 @@ class OrderView(BaseAPIView):
                 return self.error(message='Отсуствует обязательный параметры "Статус"')
 
             order = await mongo.orders.find_one_and_update({'_id': ObjectId(order_id)}, {'$set': {
-                'status': status
+                'status': status,
+                'temporary_text': None
             }}, return_document=ReturnDocument.AFTER)
 
             if not order:
@@ -97,7 +98,14 @@ class OrderView(BaseAPIView):
             }})
             return self.success()
 
-        if action == 'change_text':
-            pass
+        if action == 'change_temporary_text':
+            temporary_text = DatetimeUtils.to_datetime(request.json.get('temporary_text'))
+            if not temporary_text:
+                return self.error(message='Отсуствует обязательный параметры "temporary_text"')
+
+            await mongo.orders.update_one({'_id': ObjectId(order_id)}, {'$set': {
+                'temporary_text': temporary_text,
+            }})
+            return self.success()
 
         return self.error(message='Операция не выполнена')
