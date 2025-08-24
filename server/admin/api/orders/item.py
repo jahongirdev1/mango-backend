@@ -99,7 +99,7 @@ class OrderView(BaseAPIView):
             return self.success()
 
         if action == 'change_temporary_text':
-            temporary_text = DatetimeUtils.to_datetime(request.json.get('temporary_text'))
+            temporary_text = StrUtils.to_str(request.json.get('temporary_text'))
             if not temporary_text:
                 return self.error(message='Отсуствует обязательный параметры "temporary_text"')
 
