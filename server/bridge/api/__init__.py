@@ -13,6 +13,7 @@ from bridge.api.orders.list import OrdersBridgeView
 from bridge.api.promocodes.item import PromocodeBridgeView
 from bridge.api.sections.list import SectionsBridgeView
 from bridge.api.validations.phone import PhoneValidationsBridgeView
+from bridge.api.version import VersionBridgeView
 from bridge.api.words.list import WordsBridgeView
 
 __all__ = ['bridge_bp']
@@ -33,6 +34,7 @@ _api_bp.add_route(PhoneValidationsBridgeView.as_view(), '/validations/phone/')
 _api_bp.add_route(WordsBridgeView.as_view(), '/words/')
 _api_bp.add_route(OrdersBridgeView.as_view(), '/orders/<client_id>/')
 _api_bp.add_route(RefreshFirebaseBridgeView.as_view(), '/firebase/refresh/<client_id>/')
+_api_bp.add_route(VersionBridgeView.as_view(), '/version/')
 
 bridge_bp = Blueprint.group(
     _api_bp,
